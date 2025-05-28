@@ -56,51 +56,52 @@
   </template>
   
   <script setup>
-  import { ref, computed, onMounted } from 'vue'
-  import { useRoute } from 'vue-router'
-  
-  const route = useRoute()
-  const slug = route.params.slug || []
-  
-  const vehiculos = ref([])
-  const detalle = ref(null)
-  const cargando = ref(true)
-  
-  const esDetalle = computed(() => {
-    const lastSegment = slug[slug.length - 1]
-    return slug.length >= 6 && /^\d+$/.test(lastSegment)
-  })
-  
-  const { $api } = useNuxtApp()
-  
-  onMounted(async () => {
-    try {
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const slug = route.params.slug || []
+
+const vehiculos = ref([])
+const detalle = ref(null)
+const cargando = ref(true)
+
+const esDetalle = computed(() => {
+  const lastSegment = slug[slug.length - 1]
+  return slug.length >= 6 && /^\d+$/.test(lastSegment)
+})
+
+const { $api } = useNuxtApp()
+
+onMounted(async () => {
+  try {
+    if (esDetalle.value) {
+      const id = slug[slug.length - 1]
+      const res = await $api.get(`/vehiculos/${id}`)
+      detalle.value = res.data
+    } else {
+      // Si quisieras usar esta ruta para búsquedas más adelante
       const path = '/' + slug.join('/')
       const res = await $api.get(`/vehiculos${path}`)
-  
-      if (esDetalle.value) {
-        detalle.value = res.data
-      } else {
-        vehiculos.value = res.data
-      }
-    } catch (err) {
-      console.error('❌ Error cargando vehículos:', err)
-    } finally {
-      cargando.value = false
+      vehiculos.value = res.data
     }
-  })
-  
-  function generarRutaDetalle(v) {
-    function slugify(texto) {
-      return texto
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-    }
-  
-    return `/${slugify(v.region?.nombre)}/${slugify(v.comuna?.nombre)}/${slugify(v.marca?.nombre)}/${slugify(v.modelo?.nombre)}/${v.anio}/${v.id}`
+  } catch (err) {
+    console.error('❌ Error cargando vehículos:', err)
+  } finally {
+    cargando.value = false
   }
-  </script>
-  
+})
+
+function generarRutaDetalle(v) {
+  function slugify(texto) {
+    return texto
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+  }
+
+  return `/vehiculos/${slugify(v.region?.nombre)}/${slugify(v.comuna?.nombre)}/${slugify(v.marca?.nombre)}/${slugify(v.modelo?.nombre)}/${v.anio}/${v.id}`
+}
+</script>
