@@ -1,0 +1,10 @@
+{
+  // https://nuxt.com/docs/guide/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",                     // 👈 Importante para que los paths funcionen
+    "paths": {
+      "@/*": ["./*"]                    // 👈 Alias @ apuntando al root del proyecto
+    }
+  }
+}

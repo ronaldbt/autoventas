@@ -1,0 +1,45 @@
+# Node.js general
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+.env
+.env.*.local
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Editor config
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Backend
+backend/uploads/
+backend/.env
+backend/.env.local
+
+# Frontend
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# Coverage (tests)
+coverage/
+
+# Optional: lock files (si usas sólo uno)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Build artifacts
+*.tsbuildinfo
