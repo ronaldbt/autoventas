@@ -16,6 +16,8 @@ interface _GlobalComponents {
     'FooterAutoventas': typeof import("../components/FooterAutoventas.vue")['default']
     'HeaderNav': typeof import("../components/HeaderNav.vue")['default']
     'MarcasPopulares': typeof import("../components/MarcasPopulares.vue")['default']
+    'PeritajeCard': typeof import("../components/PeritajeCard.vue")['default']
+    'PeritajeForm': typeof import("../components/PeritajeForm.vue")['default']
     'Sidebar': typeof import("../components/Sidebar.vue")['default']
     'NuxtWelcome': typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
     'NuxtLayout': typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
@@ -45,6 +47,8 @@ interface _GlobalComponents {
     'LazyFooterAutoventas': LazyComponent<typeof import("../components/FooterAutoventas.vue")['default']>
     'LazyHeaderNav': LazyComponent<typeof import("../components/HeaderNav.vue")['default']>
     'LazyMarcasPopulares': LazyComponent<typeof import("../components/MarcasPopulares.vue")['default']>
+    'LazyPeritajeCard': LazyComponent<typeof import("../components/PeritajeCard.vue")['default']>
+    'LazyPeritajeForm': LazyComponent<typeof import("../components/PeritajeForm.vue")['default']>
     'LazySidebar': LazyComponent<typeof import("../components/Sidebar.vue")['default']>
     'LazyNuxtWelcome': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
     'LazyNuxtLayout': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
@@ -80,6 +84,8 @@ export const BuscadorAutos: typeof import("../components/BuscadorAutos.vue")['de
 export const FooterAutoventas: typeof import("../components/FooterAutoventas.vue")['default']
 export const HeaderNav: typeof import("../components/HeaderNav.vue")['default']
 export const MarcasPopulares: typeof import("../components/MarcasPopulares.vue")['default']
+export const PeritajeCard: typeof import("../components/PeritajeCard.vue")['default']
+export const PeritajeForm: typeof import("../components/PeritajeForm.vue")['default']
 export const Sidebar: typeof import("../components/Sidebar.vue")['default']
 export const NuxtWelcome: typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
 export const NuxtLayout: typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
@@ -109,6 +115,8 @@ export const LazyBuscadorAutos: LazyComponent<typeof import("../components/Busca
 export const LazyFooterAutoventas: LazyComponent<typeof import("../components/FooterAutoventas.vue")['default']>
 export const LazyHeaderNav: LazyComponent<typeof import("../components/HeaderNav.vue")['default']>
 export const LazyMarcasPopulares: LazyComponent<typeof import("../components/MarcasPopulares.vue")['default']>
+export const LazyPeritajeCard: LazyComponent<typeof import("../components/PeritajeCard.vue")['default']>
+export const LazyPeritajeForm: LazyComponent<typeof import("../components/PeritajeForm.vue")['default']>
 export const LazySidebar: LazyComponent<typeof import("../components/Sidebar.vue")['default']>
 export const LazyNuxtWelcome: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
 export const LazyNuxtLayout: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>

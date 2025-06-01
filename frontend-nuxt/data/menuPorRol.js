@@ -42,6 +42,18 @@ export const menusPorRol = {
       { label: 'Vendedores', icon: '🧑‍💼', route: '/concesionario/vendedores' },
       { label: 'Mi perfil', icon: '👤', route: '/concesionario/perfil' }
     ],
+    AUTOMOTORA: [
+      { label: 'Inicio', icon: '🏠', route: '/automotora/dashboard' },
+      { label: 'Mi automotora', icon: '🏢', route: '/automotora/mi-automotora' },
+      { label: 'Perfil', icon: '👤', route: '/automotora/perfil' },
+      { label: 'Ventas', icon: '💰', route: '/automotora/ventas' }
+    ],
+    PERITO: [
+      { label: 'Dashboard', icon: '📋', route: '/perito/index' },
+      { label: 'Peritajes', icon: '🧾', route: '/perito/peritajes' },
+      { label: 'Nuevo Peritaje', icon: '➕', route: '/perito/nuevo' },
+      { label: 'Mi perfil', icon: '👤', route: '/perito/perfil' } // futura vista
+    ],
   
     PUBLICISTA: [
       { label: 'Inicio', icon: '📊', route: '/publicista/dashboard' },

@@ -1,7 +1,7 @@
 <!-- pages/index.vue -->
 <template>
     <div class="min-h-screen bg-black text-white">
-      <HeaderNav />
+    
       <BuscadorAutos />
       <MarcasPopulares />
       <FooterAutoventas />

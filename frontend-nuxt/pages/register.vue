@@ -44,7 +44,7 @@
             >
               <option disabled value="">Selecciona un rol</option>
               <option value="CLIENTE">Cliente</option>
-              <option value="CONCESIONARIO">Concesionario</option>
+              <option value="AUTOMOTORA">Automotora</option>
               <option value="PUBLICISTA">Publicista</option>
             </select>
           </div>

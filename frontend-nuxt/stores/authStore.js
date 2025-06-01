@@ -1,10 +1,12 @@
 // src/stores/authStore.js
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useRouter, useNuxtApp } from '#imports'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
   const token = ref(null)
+  const router = useRouter()
 
   function cargarDesdeLocalStorage() {
     const userLS = localStorage.getItem('user')
@@ -27,6 +29,33 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('user')
     localStorage.removeItem('token')
     localStorage.removeItem('rol')
+    router.push('/login')
+  }
+
+  // ✅ Verificar token contra el backend
+  async function validarToken() {
+    if (!token.value) return false
+
+    try {
+      const { $api } = useNuxtApp() // Asegúrate de tener `$api` configurado con Axios en plugins
+      const res = await $api.get('/auth/verificar', {
+        headers: {
+          Authorization: `Bearer ${token.value}`
+        }
+      })
+
+      if (res?.data?.usuario) {
+        user.value = res.data.usuario
+        return true
+      }
+
+      logout()
+      return false
+    } catch (error) {
+      console.warn('Token inválido o expirado. Cerrando sesión.')
+      logout()
+      return false
+    }
   }
 
   return {
@@ -34,6 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     login,
     logout,
-    cargarDesdeLocalStorage
+    cargarDesdeLocalStorage,
+    validarToken
   }
 })

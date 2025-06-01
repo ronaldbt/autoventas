@@ -3,8 +3,13 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Usuario extends Model {
     static associate(models) {
-      // definir asociaciones aquí más adelante
+      Usuario.hasOne(models.Automotora, {
+        foreignKey: 'usuarioId',
+        as: 'automotora',
+        onDelete: 'CASCADE'
+      });
     }
+    
   }
   Usuario.init({
     nombre: DataTypes.STRING,
@@ -14,9 +19,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: DataTypes.STRING,
     rol: {
-      type: DataTypes.ENUM('CLIENTE', 'CONCESIONARIO', 'PUBLICISTA', 'ADMIN'),
+      type: DataTypes.ENUM('CLIENTE', 'AUTOMOTORA', 'PUBLICISTA', 'ADMIN', 'PERITO'),
       defaultValue: 'CLIENTE'
-    }
+    }    
   }, {
     sequelize,
     modelName: 'Usuario',

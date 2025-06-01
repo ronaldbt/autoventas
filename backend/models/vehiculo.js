@@ -43,6 +43,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'comunaId',
         as: 'comuna'
       });
+
+      // 🔧 Relación agregada: un vehículo pertenece a una automotora
+      Vehiculo.belongsTo(models.Automotora, {
+        foreignKey: 'automotoraId',
+        as: 'automotora'
+      });
     }
   }
 
@@ -93,11 +99,18 @@ module.exports = (sequelize, DataTypes) => {
       },
       descripcion: DataTypes.TEXT,
 
-      // Foreign Keys con referencias explícitas
+      // Foreign Keys
       vendedorId: {
         type: DataTypes.INTEGER,
         references: {
           model: 'Usuarios',
+          key: 'id'
+        }
+      },
+      automotoraId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'Automotoras',
           key: 'id'
         }
       },
