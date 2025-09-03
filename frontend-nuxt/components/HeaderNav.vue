@@ -1,63 +1,100 @@
 <template>
-  <header class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
-    <div class="flex items-center space-x-6">
-      <img src="https://www.svgrepo.com/show/474444/car.svg" alt="Logo" class="h-8" />
-      <nav class="space-x-4 hidden md:flex">
-        <NuxtLink to="/" class="hover:underline">Todos los Autos</NuxtLink>
-        <NuxtLink to="/nuevos" class="hover:underline">Autos Nuevos</NuxtLink>
-        <NuxtLink to="/electricos" class="hover:underline">Autos Eléctricos</NuxtLink>
-        <NuxtLink to="/vender" class="hover:underline">Vende tu Auto</NuxtLink>
-        <NuxtLink to="/analisis" class="hover:underline">Análisis</NuxtLink>
-        <NuxtLink to="/noticias" class="hover:underline">Noticias</NuxtLink>
-        <NuxtLink to="/ayuda" class="hover:underline">Ayuda y Sitios</NuxtLink>
-        <NuxtLink to="/servicios" class="hover:underline">Servicios</NuxtLink>
-      </nav>
-    </div>
+  <header class="bg-white/95 backdrop-blur-sm border-b border-slate-200/50 shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <!-- Logo y navegación -->
+        <div class="flex items-center space-x-8">
+          <NuxtLink to="/" class="flex items-center space-x-2 hover:scale-105 transition-transform duration-200">
+            <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+            <span class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+              Autoventas360
+            </span>
+          </NuxtLink>
+          
+          <nav class="hidden lg:flex space-x-6">
+            <NuxtLink to="/nuevos" class="text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200">Autos Nuevos</NuxtLink>
+            <NuxtLink to="/electricos" class="text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200">Autos Eléctricos</NuxtLink>
+            <NuxtLink to="/analisis" class="text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200">Análisis</NuxtLink>
+            <NuxtLink to="/noticias" class="text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200">Noticias</NuxtLink>
+            <NuxtLink to="/ayuda" class="text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200">Ayuda</NuxtLink>
+            <NuxtLink to="/servicios" class="text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200">Servicios</NuxtLink>
+          </nav>
+        </div>
 
-    <div class="space-x-4 flex items-center relative">
-      <!-- Si está logueado, mostrar botón con menú -->
-      <div v-if="estaLogueado" class="relative" ref="menuRef">
-        <button
-          @click="mostrarMenu = !mostrarMenu"
-          class="flex items-center gap-2 text-sm text-gray-300 hover:text-white focus:outline-none"
-        >
-          👤 {{ authStore.user.email }}
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fill-rule="evenodd"
-              d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </button>
+        <!-- Acciones del usuario -->
+        <div class="flex items-center space-x-4">
+          <!-- Si está logueado -->
+          <div v-if="estaLogueado" class="relative" ref="menuRef">
+            <button
+              @click="mostrarMenu = !mostrarMenu"
+              class="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200 rounded-lg hover:bg-slate-50"
+            >
+              <div class="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
+                <span class="text-white text-sm font-semibold">{{ authStore.user.email.charAt(0).toUpperCase() }}</span>
+              </div>
+              <span class="hidden sm:block">{{ authStore.user.email }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
 
-        <!-- Menú desplegable -->
-        <div
-          v-if="mostrarMenu"
-          class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-50 py-2"
-        >
-          <NuxtLink to="/perfil" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Mi perfil</NuxtLink>
-          <NuxtLink to="/mis-autos" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Mis autos</NuxtLink>
-          <button
-            @click="cerrarSesion"
-            class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
-          >
-            Cerrar sesión
-          </button>
+            <!-- Menú desplegable -->
+            <div
+              v-if="mostrarMenu"
+              class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-200/50 z-50 py-2"
+            >
+              <div class="px-4 py-3 border-b border-slate-100">
+                <p class="text-sm font-medium text-slate-900">{{ authStore.user.email }}</p>
+                <p class="text-xs text-slate-500">Usuario registrado</p>
+              </div>
+              <NuxtLink to="/perfil" class="flex items-center px-4 py-3 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                Mi perfil
+              </NuxtLink>
+              <NuxtLink to="/mis-autos" class="flex items-center px-4 py-3 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+                Mis autos
+              </NuxtLink>
+              <div class="border-t border-slate-100 mt-2 pt-2">
+                <button
+                  @click="cerrarSesion"
+                  class="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+                >
+                  <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                  </svg>
+                  Cerrar sesión
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Si NO está logueado -->
+          <template v-else>
+            <NuxtLink to="/login" class="text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200 px-4 py-2 rounded-lg hover:bg-slate-50">
+              Ingresar
+            </NuxtLink>
+            <NuxtLink to="/register" class="text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200 px-4 py-2 rounded-lg hover:bg-slate-50">
+              Registrarse
+            </NuxtLink>
+          </template>
+
+          <!-- Botón Vende tu Auto (mantener como está) -->
+          <NuxtLink to="/vender">
+            <button class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md whitespace-nowrap">
+              Vende tu Auto
+            </button>
+          </NuxtLink>
         </div>
       </div>
-
-      <!-- Si NO está logueado -->
-      <template v-else>
-        <NuxtLink to="/login" class="hover:underline">Ingresar</NuxtLink>
-        <NuxtLink to="/register" class="hover:underline">Registrarse</NuxtLink>
-      </template>
-
-      <NuxtLink to="/vender">
-        <button class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-full">
-          Vende tu Auto
-        </button>
-      </NuxtLink>
     </div>
   </header>
 </template>
