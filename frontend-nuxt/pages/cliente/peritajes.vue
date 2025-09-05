@@ -11,6 +11,15 @@
             <p class="text-slate-600">Gestiona y revisa todos tus peritajes realizados</p>
           </div>
           <div class="flex items-center space-x-4">
+            <button
+              @click="() => { console.log('🟡 [Peritajes] Navegando a /solicitar-peritaje...'); $router.push('/solicitar-peritaje'); }"
+              class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors shadow-lg"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Solicitar Peritaje
+            </button>
             <div class="text-right">
               <div class="text-2xl font-bold text-blue-600">{{ peritajes.length }}</div>
               <div class="text-sm text-slate-500">Peritajes totales</div>

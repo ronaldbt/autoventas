@@ -4,7 +4,7 @@ const { Peritaje, Usuario, Vehiculo } = require('../models');
 exports.crearPeritaje = async (req, res) => {
   try {
     const data = req.body;
-    const peritoId = req.user.id;
+    const peritoId = req.usuario.id;
 
     const nuevo = await Peritaje.create({ ...data, peritoId });
     res.status(201).json(nuevo);
@@ -16,7 +16,7 @@ exports.crearPeritaje = async (req, res) => {
 // Para peritos - ver sus peritajes
 exports.misPeritajes = async (req, res) => {
   try {
-    const peritoId = req.user.id;
+    const peritoId = req.usuario.id;
     const peritajes = await Peritaje.findAll({
       where: { peritoId },
       order: [['createdAt', 'DESC']]

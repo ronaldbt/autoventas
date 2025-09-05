@@ -37,6 +37,7 @@
 
         <NuxtLink
           to="/cliente/peritajes/solicitar"
+          @click="() => console.log('🟡 [Dashboard] Solicitar Peritaje clicked!')"
           class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group"
         >
           <div class="flex items-center space-x-4">

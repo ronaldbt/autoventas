@@ -55,7 +55,7 @@
                 <li v-for="child in item.children" :key="child.route">
                   <NuxtLink
                     :to="child.route"
-                    @click="() => console.log('🔵 [Sidebar] Submenu link clicked:', child.label, '->', child.route)"
+                    @click="() => console.log('🟡 [Sidebar] Link peritajes clicked:', child.label, '->', child.route)"
                     class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 rounded"
                     :class="{ 'bg-slate-800 font-semibold': route.path === child.route }"
                   >

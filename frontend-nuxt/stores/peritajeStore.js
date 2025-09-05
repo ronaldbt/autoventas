@@ -77,21 +77,6 @@ export const usePeritajeStore = defineStore('peritaje', {
       }
     },
 
-    async fetchPeritajeById(id) {
-      this.cargando = true
-      this.error = null
-      try {
-        const { data } = await useNuxtApp().$api.get(`/peritajes/${id}`)
-        this.actual = data
-        return data
-      } catch (err) {
-        console.error(`Error al cargar peritaje ${id}:`, err)
-        this.error = 'No se pudo cargar el peritaje'
-        return null
-      } finally {
-        this.cargando = false
-      }
-    },
 
     async crearPeritaje(payload) {
       this.cargando = true
