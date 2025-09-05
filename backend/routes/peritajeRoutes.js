@@ -8,7 +8,9 @@ const {
   misPeritajes,
   solicitarPeritaje,
   misPeritajesCliente,
-  obtenerPeritajeCliente
+  obtenerPeritajeCliente,
+  solicitudesPendientes,
+  tomarSolicitud
 } = require('../controllers/peritajeController');
 
 const verificarToken = require('../middleware/verificarToken');
@@ -16,6 +18,8 @@ const verificarToken = require('../middleware/verificarToken');
 // Rutas para peritos
 router.post('/', verificarToken, crearPeritaje);
 router.get('/mios', verificarToken, misPeritajes);
+router.get('/pendientes', verificarToken, solicitudesPendientes);
+router.post('/tomar/:id', verificarToken, tomarSolicitud);
 
 // Rutas para clientes
 router.post('/solicitar', verificarToken, solicitarPeritaje);

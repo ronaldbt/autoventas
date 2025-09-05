@@ -81,8 +81,8 @@
   <script setup>
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
-  import { usePeritajeStore } from '../stores/peritajeStore'
-  import PeritajeForm from '../components/PeritajeForm.vue'
+  import { usePeritajeStore } from '~/stores/peritajeStore'
+  import PeritajeForm from '~/components/PeritajeForm.vue'
   
   const router = useRouter()
   const store = usePeritajeStore()

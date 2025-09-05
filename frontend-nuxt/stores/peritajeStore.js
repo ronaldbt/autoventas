@@ -94,6 +94,40 @@ export const usePeritajeStore = defineStore('peritaje', {
       }
     },
 
+    // Para peritos - ver solicitudes pendientes
+    async fetchSolicitudesPendientes() {
+      this.cargando = true
+      this.error = null
+      try {
+        const { data } = await useNuxtApp().$api.get('/peritajes/pendientes')
+        return data
+      } catch (err) {
+        console.error('Error al cargar solicitudes pendientes:', err)
+        this.error = 'No se pudieron cargar las solicitudes'
+        return []
+      } finally {
+        this.cargando = false
+      }
+    },
+
+    // Para peritos - tomar una solicitud
+    async tomarSolicitud(id) {
+      this.cargando = true
+      this.error = null
+      try {
+        const { data } = await useNuxtApp().$api.post(`/peritajes/tomar/${id}`)
+        // Agregar a la lista del perito
+        this.lista.unshift(data.peritaje)
+        return data
+      } catch (err) {
+        console.error('Error al tomar solicitud:', err)
+        this.error = 'No se pudo tomar la solicitud'
+        throw err
+      } finally {
+        this.cargando = false
+      }
+    },
+
     setActual(peritaje) {
       this.actual = peritaje
     },

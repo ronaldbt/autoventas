@@ -8,15 +8,26 @@
             <h1 class="text-4xl font-bold text-slate-800 mb-2">Mis Peritajes</h1>
             <p class="text-slate-600 text-lg">Gestiona todos tus peritajes realizados</p>
           </div>
-          <NuxtLink
-            to="/perito/nuevo"
-            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
-          >
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Nuevo Peritaje
-          </NuxtLink>
+          <div class="flex items-center space-x-4">
+            <NuxtLink
+              to="/perito/solicitudes"
+              class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Solicitudes Pendientes
+            </NuxtLink>
+            <NuxtLink
+              to="/perito/nuevo"
+              class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Nuevo Peritaje
+            </NuxtLink>
+          </div>
         </div>
       </div>
 
@@ -115,7 +126,7 @@
   
   <script setup>
   import { onMounted, ref } from 'vue'
-  import { usePeritajeStore } from '../stores/peritajeStore'
+  import { usePeritajeStore } from '~/stores/peritajeStore'
   
   const store = usePeritajeStore()
   const peritajes = ref([])

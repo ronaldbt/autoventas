@@ -11,6 +11,7 @@
           </div>
           <NuxtLink
             to="/cliente/peritajes"
+            @click="() => console.log('🟡 [Peritaje Detail] Volver clicked')"
             class="inline-flex items-center px-6 py-3 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-colors"
           >
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

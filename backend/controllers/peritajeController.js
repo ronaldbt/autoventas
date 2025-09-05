@@ -153,3 +153,82 @@ exports.obtenerPeritajeCliente = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Para peritos - ver solicitudes pendientes (sin asignar perito)
+exports.solicitudesPendientes = async (req, res) => {
+  try {
+    const solicitudes = await Peritaje.findAll({
+      where: { 
+        tipo: 'solicitud',
+        estado: 'pendiente',
+        peritoId: null // Sin perito asignado
+      },
+      include: [
+        {
+          model: Usuario,
+          as: 'usuarioCliente',
+          attributes: ['nombre', 'email', 'telefono'],
+          required: true
+        }
+      ],
+      order: [['createdAt', 'ASC']] // Más antiguos primero
+    });
+    res.json(solicitudes);
+  } catch (err) {
+    console.error('Error al obtener solicitudes pendientes:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Para peritos - tomar una solicitud (asignarse como perito)
+exports.tomarSolicitud = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const peritoId = req.usuario.id;
+    
+    const solicitud = await Peritaje.findOne({
+      where: { 
+        id,
+        tipo: 'solicitud',
+        estado: 'pendiente',
+        peritoId: null // Solo si no tiene perito asignado
+      }
+    });
+
+    if (!solicitud) {
+      return res.status(404).json({ error: 'Solicitud no disponible' });
+    }
+
+    // Asignar perito y cambiar estado
+    await solicitud.update({
+      peritoId,
+      estado: 'en_proceso',
+      tipo: 'peritaje' // Cambiar de solicitud a peritaje
+    });
+
+    // Devolver solicitud actualizada con información del perito
+    const solicitudActualizada = await Peritaje.findOne({
+      where: { id },
+      include: [
+        {
+          model: Usuario,
+          as: 'usuarioCliente',
+          attributes: ['nombre', 'email', 'telefono']
+        },
+        {
+          model: Usuario,
+          as: 'perito',
+          attributes: ['nombre', 'email', 'telefono']
+        }
+      ]
+    });
+
+    res.json({
+      message: 'Solicitud asignada correctamente',
+      peritaje: solicitudActualizada
+    });
+  } catch (err) {
+    console.error('Error al tomar solicitud:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
