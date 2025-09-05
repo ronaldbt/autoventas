@@ -10,6 +10,14 @@ export const menusPorRol = {
         ]
       },
       {
+        label: 'Peritajes',
+        icon: '🔍',
+        children: [
+          { label: 'Mis Peritajes', route: '/cliente/peritajes' },
+          { label: 'Solicitar Nuevo', route: '/cliente/peritajes/solicitar' }
+        ]
+      },
+      {
         label: 'Informes',
         icon: '📄',
         children: [
@@ -45,6 +53,24 @@ export const menusPorRol = {
     AUTOMOTORA: [
       { label: 'Inicio', icon: '🏠', route: '/automotora/dashboard' },
       { label: 'Mi automotora', icon: '🏢', route: '/automotora/mi-automotora' },
+      {
+        label: 'Vehículos',
+        icon: '🚗',
+        children: [
+          { label: 'Listado', route: '/vehiculos' },
+          { label: 'Agregar', route: '/vehiculos/agregar' }
+        ]
+      },
+      {
+        label: 'Informes',
+        icon: '📄',
+        children: [
+          { label: 'Ventas', route: '/concesionario/informes/ventas' },
+          { label: 'Estadísticas', route: '/concesionario/informes/stats' }
+        ]
+      },
+      { label: 'Leads', icon: '👥', route: '/concesionario/leads' },
+      { label: 'Vendedores', icon: '🧑‍💼', route: '/concesionario/vendedores' },
       { label: 'Perfil', icon: '👤', route: '/automotora/perfil' },
       { label: 'Ventas', icon: '💰', route: '/automotora/ventas' }
     ],

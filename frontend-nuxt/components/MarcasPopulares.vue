@@ -24,10 +24,11 @@
           <!-- Logo de la marca -->
           <div class="flex justify-center mb-4">
             <div class="w-16 h-16 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl flex items-center justify-center p-3 group-hover:from-blue-50 group-hover:to-orange-50 transition-all duration-300">
-              <img 
-                :src="marca.logo" 
-                :alt="`Logo de ${marca.nombre}`" 
-                class="w-10 h-10 object-contain filter group-hover:scale-110 transition-transform duration-300" 
+              <LogoMarca 
+                :nombre-marca="marca.nombre"
+                :logo-url="marca.logo"
+                size="lg"
+                class="filter group-hover:scale-110 transition-transform duration-300"
               />
             </div>
           </div>
@@ -63,19 +64,56 @@
 </template>
 
 <script setup>
-const marcas = [
-  { nombre: "BMW", cantidad: 20902, logo: "https://cdn.worldvectorlogo.com/logos/bmw.svg" },
-  { nombre: "Honda", cantidad: 41570, logo: "https://cdn.worldvectorlogo.com/logos/honda.svg" },
-  { nombre: "Mercedes-Benz", cantidad: 20380, logo: "https://cdn.worldvectorlogo.com/logos/mercedes-benz-9.svg" },
-  { nombre: "Subaru", cantidad: 13223, logo: "https://cdn.worldvectorlogo.com/logos/subaru-6.svg" },
-  { nombre: "Chery", cantidad: 14977, logo: "https://cdn.worldvectorlogo.com/logos/chery-6.svg" },
-  { nombre: "Hyundai", cantidad: 33223, logo: "https://cdn.worldvectorlogo.com/logos/hyundai-4.svg" },
-  { nombre: "Mitsubishi", cantidad: 12409, logo: "https://cdn.worldvectorlogo.com/logos/mitsubishi.svg" },
-  { nombre: "Toyota", cantidad: 142016, logo: "https://cdn.worldvectorlogo.com/logos/toyota.svg" },
-  { nombre: "Chevrolet", cantidad: 16948, logo: "https://cdn.worldvectorlogo.com/logos/chevrolet.svg" },
-  { nombre: "Kia", cantidad: 33032, logo: "https://cdn.worldvectorlogo.com/logos/kia-motors.svg" },
-  { nombre: "Nissan", cantidad: 55475, logo: "https://cdn.worldvectorlogo.com/logos/nissan-9.svg" },
-  { nombre: "Volkswagen", cantidad: 24643, logo: "https://cdn.worldvectorlogo.com/logos/volkswagen-1.svg" }
-];
+import { ref, onMounted } from 'vue'
+import { useCatalogo } from '../composables/useCatalogo'
+import { logoService } from '../utils/logoService'
+import LogoMarca from './LogoMarca.vue'
+
+const { marcasPopulares, cargarMarcasPopulares, loading } = useCatalogo()
+const marcas = ref([])
+
+onMounted(async () => {
+  try {
+    // Cargar marcas populares desde la API
+    const marcasApi = await cargarMarcasPopulares(12)
+    
+    // Mapear los datos de la API con logos y cantidades reales
+    marcas.value = marcasApi.map(marca => ({
+      id: marca.id,
+      nombre: marca.nombre,
+      logo: logoService.obtenerLogo(marca.nombre, marca.logo_url),
+      cantidad: marca.cantidad_vehiculos || 0,
+      pais_origen: marca.pais_origen,
+      popularidad: marca.popularidad || 0
+    }))
+  } catch (error) {
+    console.error('❌ Error cargando marcas populares:', error)
+    
+    // Fallback a datos estáticos si hay error
+    const marcasFallback = [
+      { nombre: "Toyota", cantidad: 142016, popularidad: 100 },
+      { nombre: "Volkswagen", cantidad: 24643, popularidad: 99 },
+      { nombre: "Ford", cantidad: 18948, popularidad: 98 },
+      { nombre: "Honda", cantidad: 41570, popularidad: 97 },
+      { nombre: "Nissan", cantidad: 55475, popularidad: 96 },
+      { nombre: "Hyundai", cantidad: 33223, popularidad: 95 },
+      { nombre: "Kia", cantidad: 33032, popularidad: 94 },
+      { nombre: "BMW", cantidad: 20902, popularidad: 93 },
+      { nombre: "Mercedes-Benz", cantidad: 20380, popularidad: 92 },
+      { nombre: "Audi", cantidad: 15648, popularidad: 91 },
+      { nombre: "Chevrolet", cantidad: 16948, popularidad: 90 },
+      { nombre: "Mazda", cantidad: 12409, popularidad: 89 }
+    ]
+    
+    marcas.value = marcasFallback.map((marca, index) => ({
+      id: index + 1,
+      nombre: marca.nombre,
+      logo: logoService.obtenerLogo(marca.nombre),
+      cantidad: marca.cantidad,
+      pais_origen: 'Internacional',
+      popularidad: marca.popularidad
+    }))
+  }
+})
 </script>
   

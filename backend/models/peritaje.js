@@ -4,12 +4,19 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Peritaje extends Model {
     static associate(models) {
-      // Asociaciones si es necesario, ejemplo:
+      // Asociación con perito
       Peritaje.belongsTo(models.Usuario, {
         foreignKey: 'peritoId',
         as: 'perito'
       });
 
+      // Asociación con cliente
+      Peritaje.belongsTo(models.Usuario, {
+        foreignKey: 'clienteId',
+        as: 'usuarioCliente'
+      });
+
+      // Asociación con vehículo
       Peritaje.belongsTo(models.Vehiculo, {
         foreignKey: 'vehiculoId',
         as: 'vehiculo'
@@ -23,14 +30,19 @@ module.exports = (sequelize, DataTypes) => {
     servicio: { type: DataTypes.STRING },
     centroServicio: { type: DataTypes.STRING },
     fecha: { type: DataTypes.DATE },
+    hora: { type: DataTypes.TIME },
     secuencia: { type: DataTypes.STRING },
     cliente: { type: DataTypes.STRING },
+    nombre: { type: DataTypes.STRING },
     telefono: { type: DataTypes.STRING },
     direccion: { type: DataTypes.STRING },
     email: { type: DataTypes.STRING },
     marca: { type: DataTypes.STRING },
     modelo: { type: DataTypes.STRING },
+    ano: { type: DataTypes.INTEGER },
     color: { type: DataTypes.STRING },
+    motivo: { type: DataTypes.STRING },
+    comentarios: { type: DataTypes.TEXT },
     propietario: { type: DataTypes.STRING },
     valorAvaluo: { type: DataTypes.DECIMAL },
     numeroMotor: { type: DataTypes.STRING },
@@ -73,13 +85,20 @@ module.exports = (sequelize, DataTypes) => {
     observaciones_generales: { type: DataTypes.TEXT },
 
     // ADMINISTRATIVO
-    peritoId: { type: DataTypes.INTEGER, allowNull: false },
+    peritoId: { type: DataTypes.INTEGER },
+    clienteId: { type: DataTypes.INTEGER },
     vehiculoId: { type: DataTypes.INTEGER },
     precio: { type: DataTypes.DECIMAL },
     comisionPerito: { type: DataTypes.DECIMAL },
+    tipo: { 
+      type: DataTypes.ENUM('peritaje', 'solicitud', 'informe'),
+      defaultValue: 'peritaje'
+    },
+    titulo: { type: DataTypes.STRING },
+    descripcion: { type: DataTypes.TEXT },
     estado: {
-      type: DataTypes.ENUM('PENDIENTE', 'EN_PROCESO', 'FINALIZADO'),
-      defaultValue: 'PENDIENTE',
+      type: DataTypes.ENUM('pendiente', 'en_proceso', 'completado', 'cancelado'),
+      defaultValue: 'pendiente',
     }
   }, {
     sequelize,

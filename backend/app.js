@@ -23,11 +23,11 @@ try {
   console.error('❌ Error cargando authRoutes:', e.message);
 }
 
-// 🧑‍💼 Rutas públicas: automotoras por slug
+// 🧑‍💼 Rutas de automotoras (públicas y protegidas)
 try {
   console.log('🧩 Cargando rutas: automotorasRoutes');
   const automotorasRoutes = require('./routes/automotoras');
-  app.use('/automotoras', automotorasRoutes); // Nota: sin /api para URL SEO-friendly
+  app.use('/api/automotoras', automotorasRoutes); // Rutas protegidas bajo /api
 } catch (e) {
   console.error('❌ Error cargando automotorasRoutes:', e.message);
 }
@@ -67,6 +67,15 @@ try {
   console.log('🧾 Rutas de peritajes cargadas');
 } catch (e) {
   console.error('❌ Error cargando rutas de peritajes:', e.message);
+}
+
+// 📄 Rutas de informes
+try {
+  const informesRoutes = require('./routes/informeRoutes');
+  app.use('/api/informes', informesRoutes);
+  console.log('📄 Rutas de informes cargadas');
+} catch (e) {
+  console.error('❌ Error cargando rutas de informes:', e.message);
 }
 
 

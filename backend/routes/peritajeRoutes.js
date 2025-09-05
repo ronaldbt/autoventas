@@ -5,12 +5,21 @@ const router = express.Router();
 
 const { 
   crearPeritaje, 
-  misPeritajes 
+  misPeritajes,
+  solicitarPeritaje,
+  misPeritajesCliente,
+  obtenerPeritajeCliente
 } = require('../controllers/peritajeController');
 
 const verificarToken = require('../middleware/verificarToken');
 
+// Rutas para peritos
 router.post('/', verificarToken, crearPeritaje);
 router.get('/mios', verificarToken, misPeritajes);
+
+// Rutas para clientes
+router.post('/solicitar', verificarToken, solicitarPeritaje);
+router.get('/cliente', verificarToken, misPeritajesCliente);
+router.get('/cliente/:id', verificarToken, obtenerPeritajeCliente);
 
 module.exports = router;

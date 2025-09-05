@@ -1,6 +1,6 @@
 <!-- app.vue -->
 <template>
-  <div class="bg-black text-white min-h-screen">
+  <div class="bg-slate-950 text-white min-h-screen">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

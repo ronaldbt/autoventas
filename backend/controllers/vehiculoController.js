@@ -1,4 +1,4 @@
-const { Op } = require('sequelize')
+const { Op } = require('sequelize');
 const {
   Vehiculo,
   Marca,
@@ -8,15 +8,15 @@ const {
   Transmision,
   Combustible,
   Usuario
-} = require('../models')
+} = require('../models');
 
 /**
  * ✅ Buscar vehículos o mostrar detalle desde una URL SEO-friendly
- * Segmentos: /:region?/:comuna?/:marca?/:modelo?/:anio?/:id?
+ * Segmentos esperados: /:region?/:comuna?/:marca?/:modelo?/:anio?/:id?
  */
 exports.buscarDesdeUrlSeo = async (req, res) => {
   try {
-    const { region, comuna, marca, modelo, anio, id } = req.params
+    const { region, comuna, marca, modelo, anio, id } = req.params;
 
     // 🟡 Si hay ID y es número → mostrar detalle del vehículo
     if (id && /^\d+$/.test(id)) {
@@ -30,37 +30,48 @@ exports.buscarDesdeUrlSeo = async (req, res) => {
           { model: Combustible, as: 'combustible' },
           { model: Usuario, as: 'vendedor', attributes: ['id', 'nombre', 'email', 'rol'] }
         ]
-      })
+      });
 
       if (!vehiculo) {
-        return res.status(404).json({ message: 'Vehículo no encontrado' })
+        return res.status(404).json({ message: 'Vehículo no encontrado' });
       }
 
-      return res.json(vehiculo)
+      return res.json(vehiculo);
     }
 
-    // 🔍 Búsqueda filtrada por slug
-    const filtros = {}
+    // 🔍 Búsqueda filtrada por slug (si no hay ID)
+    const filtros = {};
 
     if (region) {
-      filtros['$region.nombre$'] = { [Op.iLike]: region.replace(/-/g, ' ') }
+      filtros['$region.nombre$'] = {
+        [Op.iLike]: decodeURIComponent(region.replace(/-/g, ' '))
+      };
     }
 
     if (comuna) {
-      filtros['$comuna.nombre$'] = { [Op.iLike]: comuna.replace(/-/g, ' ') }
+      filtros['$comuna.nombre$'] = {
+        [Op.iLike]: decodeURIComponent(comuna.replace(/-/g, ' '))
+      };
     }
 
     if (marca) {
-      filtros['$marca.nombre$'] = { [Op.iLike]: marca.replace(/-/g, ' ') }
+      filtros['$marca.nombre$'] = {
+        [Op.iLike]: decodeURIComponent(marca.replace(/-/g, ' '))
+      };
     }
 
     if (modelo) {
-      filtros['$modelo.nombre$'] = { [Op.iLike]: modelo.replace(/-/g, ' ') }
+      filtros['$modelo.nombre$'] = {
+        [Op.iLike]: decodeURIComponent(modelo.replace(/-/g, ' '))
+      };
     }
 
     if (anio && !isNaN(anio)) {
-      filtros.anio = parseInt(anio)
+      filtros.anio = parseInt(anio);
     }
+
+    // 🐞 Mostrar filtros aplicados (útil para debug)
+    console.log('🔍 Filtros aplicados:', filtros);
 
     const vehiculos = await Vehiculo.findAll({
       where: filtros,
@@ -74,11 +85,11 @@ exports.buscarDesdeUrlSeo = async (req, res) => {
         { model: Usuario, as: 'vendedor', attributes: ['id', 'nombre', 'email', 'rol'] }
       ],
       order: [['createdAt', 'DESC']]
-    })
+    });
 
-    res.json(vehiculos)
+    res.json(vehiculos);
   } catch (error) {
-    console.error('❌ Error en búsqueda SEO-friendly:', error)
-    res.status(500).json({ message: 'Error interno del servidor' })
+    console.error('❌ Error en búsqueda SEO-friendly:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
-}
+};

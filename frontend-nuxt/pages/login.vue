@@ -97,7 +97,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 
@@ -107,7 +107,61 @@ const error = ref('')
 
 const { $api, $toast } = useNuxtApp()
 const router = useRouter()
-const authStore = useAuthStore()
+let authStore = null
+const storeReady = ref(false)
+
+// Función para redirigir según el rol
+const redirigirPorRol = (rol) => {
+  switch (rol) {
+    case 'CLIENTE':
+      return '/cliente/dashboard'
+    case 'AUTOMOTORA':
+      return '/automotora/dashboard'
+    case 'PUBLICISTA':
+      return '/publicista/dashboard'
+    case 'ADMIN':
+      return '/admin/dashboard'
+    case 'PERITO':
+      return '/perito/dashboard'
+    default:
+      return '/automotora/dashboard' // Default fallback
+  }
+}
+
+// Verificar si ya está logueado al cargar la página
+onMounted(async () => {
+  // Verificar localStorage directamente primero
+  if (process.client) {
+    try {
+      const token = localStorage.getItem('token')
+      const userLS = localStorage.getItem('user')
+      
+      if (token && userLS) {
+        console.log('🔵 [Login] Usuario ya está logueado, redirigiendo...')
+        const user = JSON.parse(userLS)
+        const redirectTo = redirigirPorRol(user.rol)
+        
+        $toast.success('Ya tienes una sesión activa')
+        await router.push(redirectTo)
+        return
+      }
+    } catch (error) {
+      console.error('Error verificando sesión:', error)
+      // Limpiar datos corruptos
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
+      localStorage.removeItem('rol')
+    }
+  }
+  
+  // Inicializar store después de verificar
+  try {
+    authStore = useAuthStore()
+    storeReady.value = true
+  } catch (error) {
+    console.error('Error inicializando AuthStore:', error)
+  }
+})
 
 const login = async () => {
   try {
@@ -120,32 +174,24 @@ const login = async () => {
       throw new Error('Respuesta inválida del servidor')
     }
 
-    authStore.login(res.data)
+    // Si tenemos authStore disponible, usarlo
+    if (authStore) {
+      authStore.login(res.data)
+    } else {
+      // Fallback: guardar directamente en localStorage
+      localStorage.setItem('user', JSON.stringify(res.data.usuario))
+      localStorage.setItem('token', res.data.token)
+      localStorage.setItem('rol', res.data.usuario.rol)
+    }
+
     $toast.success('✅ Sesión iniciada con éxito')
 
     const rol = res.data.usuario.rol
+    const redirectTo = redirigirPorRol(rol)
+    
+    console.log('🔵 [Login] Redirigiendo a:', redirectTo)
+    await router.push(redirectTo)
 
-    // Redireccionar según el rol
-    switch (rol) {
-      case 'CLIENTE':
-        router.push('/cliente/dashboard')
-        break
-      case 'AUTOMOTORA':
-        router.push('/automotora/mi-automotora')
-        break
-      case 'PUBLICISTA':
-        router.push('/publicista/dashboard')
-        break
-      case 'ADMIN':
-        router.push('/admin')
-        break
-      case 'PERITO':
-        router.push('/perito')
-        break
-      default:
-        $toast.warning('⚠️ Rol no reconocido. No se puede redirigir.')
-        break
-    }
   } catch (err) {
     console.error('❌ Error al iniciar sesión:', err)
     error.value = err.response?.data?.error || err.message || 'Error al iniciar sesión'

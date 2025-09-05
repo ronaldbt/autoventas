@@ -57,5 +57,16 @@ export const vehiculoService = {
       console.error(`❌ Error actualizando estado del vehículo (${id}) a "${estado}":`, err)
       throw err
     }
+  },
+
+  async buscarVehiculos(filtros) {
+    const { $api } = useNuxtApp()
+    try {
+      const res = await $api.post('/vehiculos/buscar', filtros)
+      return res.data
+    } catch (err) {
+      console.error('❌ Error buscando vehículos (buscarVehiculos):', err)
+      throw err
+    }
   }
 }

@@ -1,21 +1,23 @@
 // nuxt.config.js
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-  compatibilityDate: '2025-05-15',
+  compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-
+  
   // ✅ Estilos globales
   css: ['~/assets/css/main.css'],
-
+  
   // ✅ Módulos de Nuxt
   modules: ['@pinia/nuxt'],
-
+  
   // ✅ Configuración de Vite para Tailwind CSS v4
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [
+      tailwindcss(),
+    ],
   },
-
+  
   // ✅ Alias personalizado
   alias: {
     '@': './'

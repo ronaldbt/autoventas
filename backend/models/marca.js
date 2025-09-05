@@ -25,6 +25,23 @@ module.exports = (sequelize, DataTypes) => {
       pais_origen: {
         type: DataTypes.STRING,
         allowNull: true
+      },
+      popularidad: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0,
+        comment: 'Puntuación de popularidad de 0 a 100'
+      },
+      logo_url: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment: 'URL del logo de la marca'
+      },
+      cantidad_vehiculos: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0,
+        comment: 'Cantidad de vehículos disponibles de esta marca'
       }
     },
     {

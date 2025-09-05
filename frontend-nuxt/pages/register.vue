@@ -155,19 +155,38 @@ const rol = ref('')
 const error = ref('')
 
 const register = async () => {
+  console.log('🔵 [FRONTEND] Iniciando registro...');
+  console.log('🔵 [FRONTEND] Datos a enviar:', {
+    nombre: nombre.value,
+    email: email.value,
+    password: '***',
+    rol: rol.value
+  });
+  
   try {
-    await $api.post('/auth/register', {
+    const response = await $api.post('/auth/register', {
       nombre: nombre.value,
       email: email.value,
       password: password.value,
       rol: rol.value
-    })
-
-    $toast.success('✅ Registro exitoso')
-    router.push('/login')
+    });
+    
+    console.log('✅ [FRONTEND] Registro exitoso:', response.data);
+    $toast.success('✅ Registro exitoso');
+    
+    // Redirigir según el rol
+    if (rol.value === 'AUTOMOTORA') {
+      console.log('🔵 [FRONTEND] Redirigiendo a automotora...');
+      router.push('/automotora/mi-automotora');
+    } else {
+      console.log('🔵 [FRONTEND] Redirigiendo a login...');
+      router.push('/login');
+    }
   } catch (err) {
-    error.value = err.response?.data?.error || 'Error al registrarse'
-    $toast.error('❌ ' + error.value)
+    console.error('❌ [FRONTEND] Error en registro:', err);
+    console.error('❌ [FRONTEND] Response error:', err.response?.data);
+    error.value = err.response?.data?.error || 'Error al registrarse';
+    $toast.error('❌ ' + error.value);
   }
 }
 </script>

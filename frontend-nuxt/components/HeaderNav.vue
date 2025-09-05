@@ -34,9 +34,9 @@
               class="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-orange-500 font-medium transition-colors duration-200 rounded-lg hover:bg-slate-50"
             >
               <div class="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
-                <span class="text-white text-sm font-semibold">{{ authStore.user.email.charAt(0).toUpperCase() }}</span>
+                <span class="text-white text-sm font-semibold">{{ usuario?.email?.charAt(0)?.toUpperCase() || 'U' }}</span>
               </div>
-              <span class="hidden sm:block">{{ authStore.user.email }}</span>
+              <span class="hidden sm:block">{{ usuario?.email || 'Usuario' }}</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -48,7 +48,7 @@
               class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-200/50 z-50 py-2"
             >
               <div class="px-4 py-3 border-b border-slate-100">
-                <p class="text-sm font-medium text-slate-900">{{ authStore.user.email }}</p>
+                <p class="text-sm font-medium text-slate-900">{{ usuario?.email || 'Usuario' }}</p>
                 <p class="text-xs text-slate-500">Usuario registrado</p>
               </div>
               <NuxtLink to="/perfil" class="flex items-center px-4 py-3 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">
@@ -100,15 +100,50 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { onClickOutside } from '@vueuse/core'
 import { useAuthStore } from '../stores/authStore'
 
-const authStore = useAuthStore()
 const router = useRouter()
+let authStore = null
+const storeReady = ref(false)
 
-const estaLogueado = computed(() => !!authStore.user && !!authStore.token)
+// Inicializar el store de forma segura
+onMounted(() => {
+  try {
+    authStore = useAuthStore()
+    storeReady.value = true
+    console.log('🔵 [HeaderNav] AuthStore inicializado correctamente');
+  } catch (error) {
+    console.error('🔴 [HeaderNav] Error inicializando AuthStore:', error);
+  }
+})
+
+const estaLogueado = computed(() => {
+  // Si no tenemos store, verificar localStorage directamente
+  if (!storeReady.value || !authStore) {
+    if (!process.client) return false
+    
+    try {
+      const token = localStorage.getItem('token')
+      const user = localStorage.getItem('user')
+      return !!(token && user)
+    } catch {
+      return false
+    }
+  }
+  
+  // Si tenemos store, usar la lógica normal
+  const isLoggedIn = !!(authStore.user && authStore.token)
+  console.log('🔵 [HeaderNav] Verificando estado de login:', {
+    user: authStore.user,
+    token: authStore.token,
+    estaLogueado: isLoggedIn
+  });
+  return isLoggedIn
+});
+
 const mostrarMenu = ref(false)
 
 // Referencia al contenedor del menú
@@ -119,8 +154,36 @@ onClickOutside(menuRef, () => {
 
 // Cerrar sesión
 function cerrarSesion() {
-  authStore.logout()
+  if (authStore) {
+    authStore.logout()
+  } else {
+    // Fallback si no hay store disponible
+    if (process.client) {
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
+      localStorage.removeItem('rol')
+    }
+  }
   mostrarMenu.value = false
   router.push('/')
 }
+
+// Computed para obtener el usuario de forma segura
+const usuario = computed(() => {
+  if (storeReady.value && authStore?.user) {
+    return authStore.user
+  }
+  
+  // Fallback a localStorage
+  if (process.client) {
+    try {
+      const userLS = localStorage.getItem('user')
+      return userLS ? JSON.parse(userLS) : null
+    } catch {
+      return null
+    }
+  }
+  
+  return null
+})
 </script>

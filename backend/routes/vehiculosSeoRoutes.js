@@ -1,9 +1,9 @@
 // backend/routes/vehiculosSeoRoutes.js
 const express = require('express');
 const router = express.Router();
-const { Vehiculo } = require('../models'); // o tu controlador
+const { Vehiculo } = require('../models');
 
-// Endpoint de búsqueda
+// ✅ Este endpoint responde a filtros enviados como query params
 router.get('/', async (req, res) => {
   const { region, comuna, marca, modelo, anio } = req.query;
 

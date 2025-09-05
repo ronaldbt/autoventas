@@ -28,6 +28,24 @@ router.post('/crear', upload.array('imagenes', 10), async (req, res) => {
   try {
     const { body, files } = req;
 
+    // Permitir modelo en texto libre: si viene 'modeloNombre' sin 'modeloId', lo guardamos en 'version'
+    if (body.modeloNombre && !body.modeloId) {
+      body.version = body.version ? `${body.version} ${body.modeloNombre}` : body.modeloNombre;
+    }
+    // Evitar insertar columna inexistente
+    if (body.modeloNombre) {
+      delete body.modeloNombre;
+    }
+
+    // Permitir comuna en texto libre: si viene 'comunaNombre' sin 'comunaId', lo agregamos a la descripción
+    if (body.comunaNombre && !body.comunaId) {
+      const descExtra = `\nUbicación: ${body.comunaNombre}`;
+      body.descripcion = body.descripcion ? `${body.descripcion}${descExtra}` : descExtra.trim();
+    }
+    if (body.comunaNombre) {
+      delete body.comunaNombre;
+    }
+
     const nuevoVehiculo = await Vehiculo.create({
       ...body,
       imagenes: []
@@ -66,7 +84,33 @@ router.post('/crear', upload.array('imagenes', 10), async (req, res) => {
  */
 router.get('/', async (req, res) => {
   try {
+    const {
+      marcaId,
+      modelo, // texto libre en version
+      regionId,
+      comunaId,
+      anioMin,
+      anioMax,
+      precioMin,
+      precioMax,
+      carroceriaId
+    } = req.query;
+
+    const filtros = { estado: 'ACTIVO' };
+    if (marcaId) filtros.marcaId = marcaId;
+    if (regionId) filtros.regionId = regionId;
+    if (comunaId) filtros.comunaId = comunaId;
+    if (carroceriaId) filtros.carroceriaId = carroceriaId;
+
+    const where = { ...filtros };
+    const { Op } = require('sequelize');
+    if (anioMin) where.anio = { ...where.anio, [Op.gte]: Number(anioMin) };
+    if (anioMax) where.anio = { ...where.anio, [Op.lte]: Number(anioMax) };
+    if (precioMin) where.precio = { ...where.precio, [Op.gte]: Number(precioMin) };
+    if (precioMax) where.precio = { ...where.precio, [Op.lte]: Number(precioMax) };
+
     const vehiculos = await Vehiculo.findAll({
+      where,
       include: [
         { model: Usuario, as: 'vendedor', attributes: ['id', 'nombre', 'email', 'rol'] },
         { model: Marca, as: 'marca' },
@@ -116,6 +160,60 @@ router.get('/:id', async (req, res) => {
   } catch (error) {
     console.error('❌ Error al obtener vehículo:', error.message);
     res.status(500).json({ error: 'Error al obtener vehículo' });
+  }
+});
+
+
+
+// ✅ Ruta de búsqueda avanzada con filtros
+router.post('/buscar', async (req, res) => {
+  try {
+    const {
+      marcaId,
+      modelo,
+      palabras,
+      regionId,
+      comunaId,
+      anioMin,
+      anioMax,
+      precioMin,
+      precioMax
+    } = req.body;
+
+    const { Op } = require('sequelize');
+    const filtros = {
+      estado: 'ACTIVO'
+    };
+
+    if (marcaId) filtros.marcaId = marcaId;
+    if (modelo) filtros.version = { [Op.iLike]: `%${modelo}%` };
+    if (palabras) filtros.titulo = { [Op.iLike]: `%${palabras}%` };
+    if (regionId) filtros.regionId = regionId;
+    if (comunaId) filtros.comunaId = comunaId;
+    if (anioMin) filtros.anio = { ...filtros.anio, [Op.gte]: anioMin };
+    if (anioMax) filtros.anio = { ...filtros.anio, [Op.lte]: anioMax };
+    if (precioMin) filtros.precio = { ...filtros.precio, [Op.gte]: precioMin };
+    if (precioMax) filtros.precio = { ...filtros.precio, [Op.lte]: precioMax };
+
+    const vehiculos = await Vehiculo.findAll({
+      where: filtros,
+      include: [
+        { model: Usuario, as: 'vendedor', attributes: ['id', 'nombre', 'email', 'rol'] },
+        { model: Marca, as: 'marca' },
+        { model: Modelo, as: 'modelo' },
+        { model: Region, as: 'region' },
+        { model: Comuna, as: 'comuna' },
+        { model: Transmision, as: 'transmision' },
+        { model: Combustible, as: 'combustible' }
+      ],
+      order: [['createdAt', 'DESC']],
+      limit: 100
+    });
+
+    res.json(vehiculos);
+  } catch (error) {
+    console.error('❌ Error en búsqueda POST /buscar:', error.message);
+    res.status(500).json({ error: 'Error al buscar vehículos' });
   }
 });
 
