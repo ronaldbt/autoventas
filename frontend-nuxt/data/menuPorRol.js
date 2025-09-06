@@ -89,9 +89,10 @@ export const menusPorRol = {
     ],
   
     ADMIN: [
-      { label: 'Panel', icon: '🛠️', route: '/admin' },
+      { label: 'Panel', icon: '🛠️', route: '/admin/dashboard' },
       { label: 'Usuarios', icon: '👥', route: '/admin/usuarios' },
       { label: 'Reportes', icon: '📊', route: '/admin/reportes' },
+      { label: 'Remates', icon: '🎯', route: '/admin/remates' },
       { label: 'Configuración', icon: '⚙️', route: '/admin/configuracion' }
     ]
   }
