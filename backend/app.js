@@ -78,6 +78,15 @@ try {
   console.error('❌ Error cargando rutas de informes:', e.message);
 }
 
+// 🔨 Rutas de remates
+try {
+  const remateRoutes = require('./routes/remateRoutes');
+  app.use('/api/remates', remateRoutes);
+  console.log('🔨 Rutas de remates cargadas');
+} catch (e) {
+  console.error('❌ Error cargando rutas de remates:', e.message);
+}
+
 
 // 📚 Rutas catálogos
 const catalogRoutes = [
@@ -105,5 +114,14 @@ app.get('/', (req, res) => {
 });
 
 console.log('✅ Todas las rutas fueron cargadas con éxito');
+
+// 🕒 Inicializar scheduler de remates
+try {
+  const remateScheduler = require('./services/remateScheduler');
+  remateScheduler.start();
+  console.log('⏰ Scheduler de remates iniciado');
+} catch (e) {
+  console.error('❌ Error iniciando scheduler de remates:', e.message);
+}
 
 module.exports = app;

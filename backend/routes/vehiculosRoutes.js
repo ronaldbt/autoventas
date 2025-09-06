@@ -122,7 +122,7 @@ router.get('/', async (req, res) => {
       ],
       order: [['createdAt', 'DESC']]
     });
-    res.json(vehiculos);
+    res.json({ vehiculos });
   } catch (error) {
     console.error('❌ Error al obtener vehículos:', error.message);
     res.status(500).json({ error: 'Error al obtener vehículos' });
