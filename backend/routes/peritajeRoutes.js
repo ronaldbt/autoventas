@@ -10,12 +10,14 @@ const {
   misPeritajesCliente,
   obtenerPeritajeCliente,
   solicitudesPendientes,
-  tomarSolicitud
+  tomarSolicitud,
+  dashboardPerito
 } = require('../controllers/peritajeController');
 
 const verificarToken = require('../middleware/verificarToken');
 
 // Rutas para peritos
+router.get('/dashboard', verificarToken, dashboardPerito);
 router.post('/', verificarToken, crearPeritaje);
 router.get('/mios', verificarToken, misPeritajes);
 router.get('/pendientes', verificarToken, solicitudesPendientes);

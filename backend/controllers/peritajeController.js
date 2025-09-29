@@ -1,4 +1,84 @@
 const { Peritaje, Usuario, Vehiculo } = require('../models');
+const { Op } = require('sequelize');
+
+// Dashboard para peritos - resumen de información
+exports.dashboardPerito = async (req, res) => {
+  try {
+    const peritoId = req.usuario.id;
+    
+    // Estadísticas generales
+    const [
+      totalPeritajes,
+      peritajesEnProceso,
+      peritajesCompletados,
+      solicitudesPendientes,
+      proximosPeritajes
+    ] = await Promise.all([
+      // Total de peritajes del perito
+      Peritaje.count({
+        where: { peritoId }
+      }),
+      
+      // Peritajes en proceso
+      Peritaje.count({
+        where: { 
+          peritoId,
+          estado: 'en_proceso'
+        }
+      }),
+      
+      // Peritajes completados
+      Peritaje.count({
+        where: { 
+          peritoId,
+          estado: 'completado'
+        }
+      }),
+      
+      // Solicitudes disponibles para tomar
+      Peritaje.count({
+        where: { 
+          tipo: 'solicitud',
+          estado: 'pendiente',
+          peritoId: null
+        }
+      }),
+      
+      // Próximos peritajes (programados)
+      Peritaje.findAll({
+        where: { 
+          peritoId,
+          estado: 'en_proceso',
+          fecha: {
+            [Op.gte]: new Date()
+          }
+        },
+        include: [
+          {
+            model: Usuario,
+            as: 'usuarioCliente',
+            attributes: ['nombre', 'email']
+          }
+        ],
+        order: [['fecha', 'ASC']],
+        limit: 5
+      })
+    ]);
+
+    res.json({
+      estadisticas: {
+        totalPeritajes,
+        peritajesEnProceso,
+        peritajesCompletados,
+        solicitudesPendientes
+      },
+      proximosPeritajes
+    });
+  } catch (err) {
+    console.error('Error en dashboard perito:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
 
 // Para peritos - crear peritaje
 exports.crearPeritaje = async (req, res) => {

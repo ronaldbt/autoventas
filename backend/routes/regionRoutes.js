@@ -5,12 +5,12 @@ const { Region } = require('../models');
 
 /**
  * ✅ GET /api/regiones
- * Obtener todas las regiones ordenadas alfabéticamente
+ * Obtener todas las regiones ordenadas de norte a sur
  */
 router.get('/', async (req, res) => {
   try {
     const regiones = await Region.findAll({
-      order: [['nombre', 'ASC']]
+      order: [['id', 'ASC']] // Ordenadas de norte a sur
     });
     res.json(regiones);
   } catch (error) {

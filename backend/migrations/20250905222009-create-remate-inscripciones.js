@@ -19,7 +19,7 @@ module.exports = {
       usuarioId: { 
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'usuarios', key: 'id' },
+        references: { model: 'Usuarios', key: 'id' },
         onDelete: 'CASCADE'
       },
       estado: {

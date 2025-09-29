@@ -27,7 +27,7 @@ module.exports = {
       vehiculoId: { 
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'vehiculos', key: 'id' },
+        references: { model: 'Vehiculos', key: 'id' },
         onDelete: 'CASCADE'
       },
       
@@ -47,18 +47,18 @@ module.exports = {
       organizadorId: { 
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'usuarios', key: 'id' },
+        references: { model: 'Usuarios', key: 'id' },
         onDelete: 'CASCADE'
       },
       vendedorId: { 
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'usuarios', key: 'id' },
+        references: { model: 'Usuarios', key: 'id' },
         onDelete: 'CASCADE'
       },
       ganadorId: { 
         type: Sequelize.INTEGER,
-        references: { model: 'usuarios', key: 'id' },
+        references: { model: 'Usuarios', key: 'id' },
         onDelete: 'SET NULL'
       },
       

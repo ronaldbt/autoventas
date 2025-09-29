@@ -3,9 +3,41 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     const carrocerias = [
-      'Sedán', 'Hatchback', 'SUV', 'Pickup', 'Coupé', 'Convertible',
-      'Station Wagon', 'Furgón', 'Minivan', 'Camión', 'Todo Terreno',
-      'Utilitario', 'Liftback', 'Fastback', 'Roadster', 'Crossover', 'Microbús'
+      // Tipos principales
+      'Sedán',
+      'Hatchback', 
+      'SUV',
+      'Pickup',
+      'Coupé',
+      'Convertible',
+      'Station Wagon',
+      'Crossover',
+      
+      // Utilitarios y comerciales
+      'Furgón',
+      'Furgoneta',
+      'Minivan',
+      'Microbus',
+      'Camión',
+      'Camioneta',
+      'Van',
+      'Utilitario',
+      
+      // Deportivos y especiales
+      'Roadster',
+      'Liftback',
+      'Fastback',
+      'Todo Terreno',
+      'Jeep',
+      
+      // Específicos del mercado chileno
+      'Doble Cabina',
+      'Cabina Simple',
+      'Cabina y Media',
+      'Familiar',
+      'City Car',
+      'Compacto',
+      'Subcompacto'
     ];
 
     const fecha = new Date();

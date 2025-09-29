@@ -7,6 +7,7 @@ const {
   Comuna,
   Transmision,
   Combustible,
+  Carroceria,
   Usuario
 } = require('../models');
 
@@ -22,13 +23,14 @@ exports.buscarDesdeUrlSeo = async (req, res) => {
     if (id && /^\d+$/.test(id)) {
       const vehiculo = await Vehiculo.findByPk(id, {
         include: [
-          { model: Marca, as: 'marca' },
-          { model: Modelo, as: 'modelo' },
-          { model: Region, as: 'region' },
-          { model: Comuna, as: 'comuna' },
-          { model: Transmision, as: 'transmision' },
-          { model: Combustible, as: 'combustible' },
-          { model: Usuario, as: 'vendedor', attributes: ['id', 'nombre', 'email', 'rol'] }
+          { model: Marca, as: 'marca', required: false },
+          { model: Modelo, as: 'modelo', required: false },
+          { model: Region, as: 'region', required: false },
+          { model: Comuna, as: 'comuna', required: false },
+          { model: Transmision, as: 'transmision', required: false },
+          { model: Combustible, as: 'combustible', required: false },
+          { model: Carroceria, as: 'carroceria', required: false },
+          { model: Usuario, as: 'vendedor', attributes: ['id', 'nombre', 'email', 'rol'], required: false }
         ]
       });
 
@@ -76,13 +78,14 @@ exports.buscarDesdeUrlSeo = async (req, res) => {
     const vehiculos = await Vehiculo.findAll({
       where: filtros,
       include: [
-        { model: Marca, as: 'marca' },
-        { model: Modelo, as: 'modelo' },
-        { model: Region, as: 'region' },
-        { model: Comuna, as: 'comuna' },
-        { model: Transmision, as: 'transmision' },
-        { model: Combustible, as: 'combustible' },
-        { model: Usuario, as: 'vendedor', attributes: ['id', 'nombre', 'email', 'rol'] }
+        { model: Marca, as: 'marca', required: false },
+        { model: Modelo, as: 'modelo', required: false },
+        { model: Region, as: 'region', required: false },
+        { model: Comuna, as: 'comuna', required: false },
+        { model: Transmision, as: 'transmision', required: false },
+        { model: Combustible, as: 'combustible', required: false },
+        { model: Carroceria, as: 'carroceria', required: false },
+        { model: Usuario, as: 'vendedor', attributes: ['id', 'nombre', 'email', 'rol'], required: false }
       ],
       order: [['createdAt', 'DESC']]
     });

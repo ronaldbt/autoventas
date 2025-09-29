@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     // Obtener todas las marcas con su id
     const [results] = await queryInterface.sequelize.query(
-      `SELECT id, nombre FROM Marcas`
+      `SELECT id, nombre FROM "Marcas"`
     );
 
     if (!results.length) {
@@ -1733,9 +1733,12 @@ module.exports = {
    // 🔍 Mostrar en consola los modelos que se van a insertar
    console.log('Modelos que se van a insertar:', modelosFinal);
 
-   // Insertar con manejo de errores
+   // Insertar con manejo de errores y evitar duplicados
    try {
-     await queryInterface.bulkInsert('Modelos', modelosFinal, {});
+     await queryInterface.bulkInsert('Modelos', modelosFinal, {
+       ignoreDuplicates: true
+     });
+     console.log('✅ Modelos insertados correctamente');
    } catch (error) {
      console.error('❌ Error al insertar modelos:', error);
    }
