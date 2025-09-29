@@ -101,6 +101,11 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 
+// Usar layout de autenticación sin sidebar
+definePageMeta({
+  layout: 'auth'
+})
+
 const email = ref('')
 const password = ref('')
 const error = ref('')
@@ -199,3 +204,4 @@ const login = async () => {
   }
 }
 </script>
+

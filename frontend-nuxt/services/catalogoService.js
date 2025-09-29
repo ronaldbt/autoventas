@@ -66,7 +66,7 @@ export const catalogoService = {
 
   async getComunasPorRegion(regionId) {
     const { $api } = useNuxtApp()
-    const res = await $api.get(`/comunas?regionId=${regionId}`)
+    const res = await $api.get(`/comunas/por-region/${regionId}`)
     return res.data
   }
 }

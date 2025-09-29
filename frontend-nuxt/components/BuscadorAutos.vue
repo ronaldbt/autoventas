@@ -20,7 +20,7 @@
       <div class="max-w-4xl mx-auto mb-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Tarjeta de Remates -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
+          <NuxtLink to="/remates" class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 block">
             <div class="flex items-center space-x-3 mb-3">
               <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,7 +30,7 @@
               <h3 class="text-lg font-semibold text-white">Remates</h3>
             </div>
             <p class="text-slate-200 text-sm">Remata tu auto en vivo y ten dinero en 2 horas</p>
-          </div>
+          </NuxtLink>
 
           <!-- Tarjeta de Peritaje -->
           <NuxtLink to="/perito/peritajes" class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 block">

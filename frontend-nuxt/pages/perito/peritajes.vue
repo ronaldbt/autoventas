@@ -131,6 +131,15 @@
   const store = usePeritajeStore()
   const peritajes = ref([])
   const loading = ref(true)
+
+  // SEO optimizado para gestión de peritajes del perito
+
+  useSeoMeta({
+    title: 'Gestión de Peritajes - Panel del Perito | Autoventas360',
+    description: 'Administra todos tus peritajes vehiculares realizados. Revisa el historial, estado de pagos y comisiones como perito certificado en Autoventas360.',
+    keywords: 'gestión peritajes, historial peritajes, comisiones perito, panel perito, peritajes realizados',
+    robots: 'noindex, nofollow'
+  })
   
   onMounted(async () => {
     loading.value = true

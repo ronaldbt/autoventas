@@ -48,8 +48,14 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Modelo</label>
-              <input v-model="modeloTexto" type="text" placeholder="Ej: 405" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
-              <p class="mt-1 text-xs text-slate-500">Por ahora puedes escribir el modelo manualmente.</p>
+              <select v-model="modeloId" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500" :disabled="!marcaId">
+                <option disabled value="">{{ marcaId ? 'Seleccionar Modelo' : 'Primero selecciona una marca' }}</option>
+                <option v-for="m in modelosFiltrados" :key="m.id" :value="m.id">{{ m.nombre }}</option>
+              </select>
+              <div class="mt-2">
+                <input v-model="modeloTexto" type="text" placeholder="O escribe el modelo si no aparece en la lista" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+                <p class="mt-1 text-xs text-slate-500">Si tu modelo no está en la lista, puedes escribirlo manualmente.</p>
+              </div>
             </div>
 
             <div>
@@ -73,6 +79,13 @@
               <select v-model="combustibleId" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                 <option disabled value="">Combustible</option>
                 <option v-for="c in combustibles" :key="c.id" :value="c.id">{{ c.nombre }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Carrocería</label>
+              <select v-model="carroceriaId" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                <option disabled value="">Tipo de carrocería</option>
+                <option v-for="car in carrocerias" :key="car.id" :value="car.id">{{ car.nombre }}</option>
               </select>
             </div>
             <div>
@@ -101,8 +114,11 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Comuna</label>
-              <input v-model="comunaTexto" type="text" placeholder="Ej: Providencia" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
-              <p class="mt-1 text-xs text-slate-500">Puedes escribir la comuna manualmente.</p>
+              <select v-model="comunaId" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                <option disabled value="">Seleccionar Comuna</option>
+                <option v-for="c in comunasFiltradas" :key="c.id" :value="c.id">{{ c.nombre }}</option>
+              </select>
+              <p class="mt-1 text-xs text-slate-500">Selecciona primero la región para ver las comunas.</p>
             </div>
 
             <div class="md:col-span-3">
@@ -134,7 +150,6 @@
   
   <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useNuxtApp } from '#app'
 import { vehiculoService } from '~/services/vehiculoService'
 import { catalogoService } from '~/services/catalogoService'
 import { notificacionService } from '~/services/notificacionService'
@@ -151,13 +166,13 @@ const version = ref('')
 const anio = ref('')
 const transmisionId = ref('')
 const combustibleId = ref('')
+const carroceriaId = ref('')
 const colorExterior = ref('')
 const colorInterior = ref('')
 const kilometros = ref('')
 const precio = ref('')
 const regionId = ref('')
 const comunaId = ref('')
-const comunaTexto = ref('')
 const titulo = ref('')
 const descripcion = ref('')
 
@@ -166,11 +181,16 @@ const marcas = ref([])
 const modelos = ref([])
 const transmisiones = ref([])
 const combustibles = ref([])
+const carrocerias = ref([])
 const regiones = ref([])
 const comunas = ref([])
 
 const comunasFiltradas = computed(() =>
   comunas.value.filter(c => c.regionId === regionId.value)
+)
+
+const modelosFiltrados = computed(() =>
+  modelos.value.filter(m => m.marcaId === marcaId.value)
 )
 
 function confirmarPatente() {
@@ -188,6 +208,7 @@ async function cargarDatos() {
   modelos.value = await catalogoService.getModelos() // si aún no está en el service, consérvalo como llamada directa
   transmisiones.value = await catalogoService.getTransmisiones()
   combustibles.value = await catalogoService.getCombustibles()
+  carrocerias.value = await catalogoService.getCarrocerias()
   regiones.value = await catalogoService.getRegiones()
   comunas.value = await catalogoService.getComunas()
 }
@@ -201,10 +222,11 @@ async function guardarVehiculo() {
     if (!anio.value || anio.value < 1900 || anio.value > new Date().getFullYear() + 1) return notificacionService.warning('⚠️ Ingresa un año válido')
     if (!transmisionId.value) return notificacionService.warning('⚠️ Selecciona el tipo de transmisión')
     if (!combustibleId.value) return notificacionService.warning('⚠️ Selecciona el tipo de combustible')
+    if (!carroceriaId.value) return notificacionService.warning('⚠️ Selecciona el tipo de carrocería')
     if (!colorExterior.value.trim() || !colorInterior.value.trim()) return notificacionService.warning('⚠️ Ingresa colores')
     if (!kilometros.value.trim() || isNaN(kilometros.value)) return notificacionService.warning('⚠️ Ingresa kilómetros válidos')
     if (!precio.value || precio.value <= 0) return notificacionService.warning('⚠️ Ingresa un precio válido')
-    if (!regionId.value || (!comunaId.value && !comunaTexto.value)) return notificacionService.warning('⚠️ Selecciona región e ingresa comuna')
+    if (!regionId.value || !comunaId.value) return notificacionService.warning('⚠️ Selecciona región y comuna')
 
     const formData = new FormData()
     formData.append('patente', patente.value)
@@ -215,13 +237,13 @@ async function guardarVehiculo() {
     formData.append('anio', anio.value)
     formData.append('transmisionId', transmisionId.value)
     formData.append('combustibleId', combustibleId.value)
+    formData.append('carroceriaId', carroceriaId.value)
     formData.append('colorExterior', colorExterior.value)
     formData.append('colorInterior', colorInterior.value)
     formData.append('kilometros', kilometros.value)
     formData.append('precio', precio.value)
     formData.append('regionId', regionId.value)
-    if (comunaId.value) formData.append('comunaId', comunaId.value)
-    if (comunaTexto.value) formData.append('comunaNombre', comunaTexto.value)
+    formData.append('comunaId', comunaId.value)
     formData.append('titulo', titulo.value)
     formData.append('descripcion', descripcion.value)
     archivos.value.forEach(file => formData.append('imagenes', file))

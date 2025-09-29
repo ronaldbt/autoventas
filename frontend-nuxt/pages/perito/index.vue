@@ -3,7 +3,7 @@
     <!-- Título + Botón -->
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-3xl font-bold text-gray-800 dark:text-white">
-        Dashboard del Perito
+        Panel de Perito - Peritajes Vehiculares Profesionales
       </h1>
       <NuxtLink
         to="/perito/nuevo"
@@ -52,10 +52,24 @@
 import { ref, onMounted } from 'vue'
 import { usePeritajeStore } from '../stores/peritajeStore'
 import PeritajeCard from '../components/PeritajeCard.vue'
+import { usePeritajeSEO } from '~/composables/usePeritajeSEO'
 
 const store = usePeritajeStore()
 const resumen = ref({ total: 0, ganado: 0 })
 const ultimos = ref([])
+
+// SEO para peritajes
+const { generatePeritajeServiceSchema } = usePeritajeSEO()
+useSeoMeta({
+  title: 'Panel de Perito - Peritajes Vehiculares Profesionales | Autoventas360',
+  description: 'Accede a tu panel de perito en Autoventas360. Gestiona peritajes vehiculares, revisa solicitudes y administra tu cartera de clientes como perito certificado.',
+  keywords: 'panel perito, peritajes vehiculares, dashboard perito, perito automotriz, gestión peritajes',
+  robots: 'noindex, nofollow'
+})
+
+// Schema para el servicio (solo si es perito verificado)
+const serviceSchema = generatePeritajeServiceSchema()
+useSchemaOrg([serviceSchema])
 
 onMounted(async () => {
   const peritajes = await store.fetchMisPeritajes()

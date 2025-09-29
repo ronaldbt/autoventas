@@ -260,7 +260,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -269,20 +269,72 @@ const cargando = ref(true)
 const imagenActual = ref('')
 
 const { $api } = useNuxtApp()
+const { generateVehicleMeta, generateVehicleStructuredData, generateSEOSlug } = useSEO()
 
-onMounted(async () => {
+// Función para cargar vehículo
+const cargarVehiculo = async () => {
   try {
     const id = route.params.id
     const res = await $api.get(`/vehiculos/${id}`)
     vehiculo.value = res.data
     imagenActual.value = vehiculo.value.imagenes?.[0] || 'https://via.placeholder.com/800x500?text=Sin+imagen'
+    
+    // Actualizar SEO cuando se carga el vehículo
+    actualizarSEO()
   } catch (error) {
     console.error('❌ Error cargando vehículo:', error)
   } finally {
     cargando.value = false
   }
-})
+}
+
+// Función para actualizar SEO
+const actualizarSEO = () => {
+  if (!vehiculo.value) return
+
+  // Generar meta tags dinámicos
+  const seoMeta = generateVehicleMeta(vehiculo.value)
+  
+  // Actualizar head
+  useHead(seoMeta)
+
+  // Generar structured data
+  const structuredData = generateVehicleStructuredData(vehiculo.value)
+  if (structuredData) {
+    useHead({
+      script: [
+        {
+          type: 'application/ld+json',
+          innerHTML: JSON.stringify(structuredData)
+        }
+      ]
+    })
+  }
+
+  // Generar URL SEO-friendly para futuras implementaciones
+  const seoSlug = generateSEOSlug(vehiculo.value)
+  console.log('🔍 SEO Slug generado:', seoSlug)
+}
+
+onMounted(cargarVehiculo)
+
+// Actualizar SEO cuando cambie el vehículo
+watch(vehiculo, actualizarSEO)
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

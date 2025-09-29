@@ -212,3 +212,17 @@ export const useCatalogoStore = defineStore('catalogo', () => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

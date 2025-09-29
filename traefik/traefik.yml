@@ -1,0 +1,44 @@
+# Traefik static configuration
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+api:
+  dashboard: true
+  insecure: false
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entrypoint:
+          to: websecure
+          scheme: https
+          permanent: true
+
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: autoventas-network
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: admin@autoventas360.com
+      storage: /letsencrypt/acme.json
+      tlsChallenge: {}
+
+# Optional: Metrics for monitoring
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addServicesLabels: true
+
+# Optional: Access logs
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  format: json

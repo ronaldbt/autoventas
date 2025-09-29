@@ -6,6 +6,7 @@ export const menusPorRol = {
         icon: '🚗',
         children: [
           { label: 'Listado', route: '/vehiculos' },
+          { label: 'Mis Autos', route: '/cliente/mis-autos' },
           { label: 'Agregar', route: '/vehiculos/agregar' }
         ]
       },
@@ -75,10 +76,10 @@ export const menusPorRol = {
       { label: 'Ventas', icon: '💰', route: '/automotora/ventas' }
     ],
     PERITO: [
-      { label: 'Dashboard', icon: '📋', route: '/perito/index' },
+      { label: 'Dashboard', icon: '📋', route: '/perito/dashboard' },
       { label: 'Peritajes', icon: '🧾', route: '/perito/peritajes' },
       { label: 'Nuevo Peritaje', icon: '➕', route: '/perito/nuevo' },
-      { label: 'Mi perfil', icon: '👤', route: '/perito/perfil' } // futura vista
+      { label: 'Mi perfil', icon: '👤', route: '/perito/perfil' }
     ],
   
     PUBLICISTA: [

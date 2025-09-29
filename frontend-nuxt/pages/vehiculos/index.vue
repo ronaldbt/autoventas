@@ -331,6 +331,10 @@ const paginasVisibles = computed(() => {
 })
 
 const { $api } = useNuxtApp()
+const { generateCategoryMeta } = useSEO()
+
+// SEO para la página principal de vehículos
+useHead(generateCategoryMeta('general', 'Vehículos', vehiculosFiltered.value.length))
 
 // Cargar vehículos
 onMounted(async () => {
@@ -341,10 +345,13 @@ async function cargarVehiculos() {
   cargando.value = true
   try {
     const res = await $api.get('/vehiculos')
-    vehiculos.value = res.data
+    // La API devuelve {vehiculos: []} así que accedemos a res.data.vehiculos
+    vehiculos.value = res.data.vehiculos || []
     aplicarOrdenamiento()
   } catch (err) {
     console.error('❌ Error cargando vehículos:', err)
+    // En caso de error, aseguramos que vehiculos sea un array vacío
+    vehiculos.value = []
   } finally {
     cargando.value = false
   }
@@ -410,15 +417,8 @@ function resetearPagina() {
 }
 
 function generarRutaDetalle(v) {
-  function slugify(texto) {
-    return (texto || '')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-  }
-
-  return `/vehiculos/${slugify(v.region?.nombre)}/${slugify(v.comuna?.nombre)}/${slugify(v.marca?.nombre)}/${slugify(v.modelo?.nombre)}/${v.anio}/${v.id}`
+  // Usar el composable SEO para generar URLs consistentes
+  const { generateHierarchicalURL } = useSEO()
+  return generateHierarchicalURL(v)
 }
 </script>

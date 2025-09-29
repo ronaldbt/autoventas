@@ -12,10 +12,11 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@nuxt/kit": "^4.1.0",
+    "@nuxtjs/seo": "^3.2.2",
+    "@nuxtjs/sitemap": "^7.4.7",
     "@pinia/nuxt": "^0.11.0",
     "@vueuse/core": "^13.3.0",
     "axios": "^1.9.0",
-
     "nuxt": "^3.17.4",
     "pinia": "^3.0.2",
     "vue": "^3.5.14",

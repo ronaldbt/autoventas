@@ -305,5 +305,24 @@ const enviarSolicitud = async () => {
     loading.value = false
   }
 }
+
+// SEO optimization para solicitar peritaje
+const { generatePeritajeMeta, generatePeritajeSchema, generatePeritajeFAQSchema } = usePeritajeSEO()
+
+useHead(generatePeritajeMeta('solicitar', 'general'))
+
+// Structured Data para solicitar peritaje
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(generatePeritajeSchema('solicitud'))
+    },
+    {
+      type: 'application/ld+json', 
+      innerHTML: JSON.stringify(generatePeritajeFAQSchema('solicitar'))
+    }
+  ]
+})
 </script>
 

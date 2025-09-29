@@ -1,0 +1,140 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database - Production
+  postgres:
+    image: postgres:15-alpine
+    container_name: autoventas-postgres-prod
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data/pgdata
+      - ./backup:/backup
+    networks:
+      - autoventas-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # No exposed ports in production for security
+
+  # Backend API - Production
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: autoventas-backend-prod
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PORT: 3001
+      JWT_SECRET: ${JWT_SECRET}
+      NODE_ENV: production
+    networks:
+      - autoventas-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - /var/log/autoventas:/app/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend-prod.rule=Host(`api.${DOMAIN}`)"
+      - "traefik.http.routers.backend-prod.tls=true"
+      - "traefik.http.routers.backend-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.services.backend-prod.loadbalancer.server.port=3001"
+      - "traefik.http.routers.backend-prod.middlewares=auth-backend"
+      - "traefik.http.middlewares.auth-backend.headers.customrequestheaders.X-Forwarded-Proto=https"
+
+  # Frontend Nuxt - Production
+  frontend:
+    build:
+      context: ./frontend-nuxt
+      dockerfile: Dockerfile
+    container_name: autoventas-frontend-prod
+    environment:
+      NUXT_PUBLIC_API_BASE: https://api.${DOMAIN}/api
+      NODE_ENV: production
+    networks:
+      - autoventas-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend-prod.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)"
+      - "traefik.http.routers.frontend-prod.tls=true"
+      - "traefik.http.routers.frontend-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend-prod.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www.${DOMAIN}/(.*)"
+      - "traefik.http.middlewares.www-redirect.redirectregex.replacement=https://${DOMAIN}/$${1}"
+      - "traefik.http.routers.frontend-prod.middlewares=www-redirect"
+
+  # Traefik Reverse Proxy - Production
+  traefik:
+    image: traefik:v3.0
+    container_name: autoventas-traefik-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - traefik_letsencrypt_prod:/letsencrypt
+      - /var/log/traefik:/var/log/traefik
+    networks:
+      - autoventas-network
+    restart: unless-stopped
+    environment:
+      - TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_EMAIL=${ACME_EMAIL}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard-prod.rule=Host(`traefik.${DOMAIN}`)"
+      - "traefik.http.routers.dashboard-prod.tls=true"
+      - "traefik.http.routers.dashboard-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dashboard-prod.service=api@internal"
+      - "traefik.http.routers.dashboard-prod.middlewares=dashboard-auth"
+      - "traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_AUTH}"
+
+  # Optional: Database backup service
+  backup:
+    image: postgres:15-alpine
+    container_name: autoventas-backup
+    environment:
+      PGPASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./backup:/backup
+      - ./scripts:/scripts
+    networks:
+      - autoventas-network
+    depends_on:
+      - postgres
+    restart: "no"
+    entrypoint: |
+      sh -c '
+        while true; do
+          pg_dump -h postgres -U ${DB_USER} -d ${DB_NAME} > /backup/autoventas_$$(date +%Y%m%d_%H%M%S).sql
+          find /backup -name "autoventas_*.sql" -mtime +7 -delete
+          sleep 86400
+        done
+      '
+
+networks:
+  autoventas-network:
+    driver: bridge
+
+volumes:
+  postgres_data_prod:
+    driver: local
+  traefik_letsencrypt_prod:
+    driver: local

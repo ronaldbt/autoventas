@@ -49,6 +49,36 @@ export default {
       } catch (error) {
         throw new Error(error.response?.data?.message || 'Error al eliminar el peritaje')
       }
+    },
+
+    // Dashboard del perito
+    async dashboard($api) {
+      try {
+        const response = await $api.get('/peritajes/dashboard')
+        return response.data
+      } catch (error) {
+        throw new Error(error.response?.data?.message || 'Error al cargar dashboard')
+      }
+    },
+
+    // Obtener solicitudes pendientes
+    async solicitudesPendientes($api) {
+      try {
+        const response = await $api.get('/peritajes/pendientes')
+        return response.data
+      } catch (error) {
+        throw new Error(error.response?.data?.message || 'Error al cargar solicitudes')
+      }
+    },
+
+    // Tomar una solicitud
+    async tomarSolicitud($api, id) {
+      try {
+        const response = await $api.post(`/peritajes/tomar/${id}`)
+        return response.data
+      } catch (error) {
+        throw new Error(error.response?.data?.message || 'Error al tomar solicitud')
+      }
     }
   }
   

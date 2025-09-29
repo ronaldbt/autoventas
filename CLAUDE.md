@@ -129,3 +129,94 @@ Both backend and frontend use `.env` files:
 - File upload handling for vehicle images with multer
 - Catalog management (brands, models, regions, communes)
 - Responsive design with Tailwind CSS v4
+
+## Docker Configuration
+
+The project is fully dockerized for both development and production environments:
+
+### Docker Setup
+
+- **Development**: Use `docker-compose.yml` for local development
+- **Production**: Use `docker-compose.prod.yml` with Traefik reverse proxy
+- **Database**: PostgreSQL container with persistent volumes
+- **SSL**: Automatic SSL certificates via Let's Encrypt in production
+- **Backup**: Automated database backups with retention policy
+
+### Docker Commands
+
+```bash
+# Development setup
+./scripts/setup.sh dev
+# Or manually: docker compose up -d
+
+# Production setup
+./scripts/setup.sh prod
+# Or manually: docker compose -f docker-compose.prod.yml up -d --build
+
+# Database operations
+docker exec -it autoventas-postgres psql -U autoventas_user -d autoventas360
+docker exec autoventas-backend npx sequelize-cli db:migrate
+docker exec autoventas-backend npx sequelize-cli db:seed:all
+
+# Backup database
+./scripts/backup.sh
+```
+
+### Docker Services
+
+1. **postgres**: PostgreSQL 15 with persistent data volume
+2. **backend**: Node.js API with health checks
+3. **frontend**: Nuxt 3 application with multi-stage build
+4. **traefik**: Reverse proxy with SSL termination (production only)
+5. **backup**: Automated database backup service (production only)
+
+### Environment Configuration
+
+- **Development**: Uses default values from `backend/.env`
+- **Production**: Requires `.env.prod` file based on `.env.production` template
+- **Database persistence**: Data stored in Docker volumes, prevents data loss
+- **SSL certificates**: Stored in persistent Traefik volume
+
+### URLs
+
+**Development:**
+- Frontend: http://localhost:3000
+- Backend: http://localhost:3001
+- Traefik Dashboard: http://localhost:8080
+
+**Production:**
+- Frontend: https://autoventas360.com
+- Backend API: https://api.autoventas360.com
+- Traefik Dashboard: https://traefik.autoventas360.com
+
+### Key Docker Files
+
+- `docker-compose.yml` - Development environment
+- `docker-compose.prod.yml` - Production with Traefik
+- `backend/Dockerfile` - Backend container definition
+- `frontend-nuxt/Dockerfile` - Frontend container with multi-stage build
+- `traefik/traefik.yml` - Traefik static configuration
+- `scripts/setup.sh` - Automated setup script
+- `scripts/backup.sh` - Database backup script
+- `README-DOCKER.md` - Complete Docker documentation
+
+### Database Issues Resolution
+
+If you encounter "role autoventas_user does not exist" errors:
+
+1. **Manual fix (before Docker)**:
+```bash
+psql -U j -d postgres -c "CREATE USER autoventas_user WITH PASSWORD 'parol123';"
+psql -U j -d postgres -c "CREATE DATABASE autoventas360 OWNER autoventas_user;"
+psql -U j -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE autoventas360 TO autoventas_user;"
+cd backend && npx sequelize-cli db:migrate
+```
+
+2. **Docker solution**: Use the Docker setup which prevents this issue by using persistent volumes
+
+### Next Steps
+
+- Install Docker Desktop to use the containerized environment
+- Configure production environment variables in `.env.prod`
+- Set up domain DNS to point to your server for production deployment
+- Configure SSL email and Traefik dashboard authentication for production
