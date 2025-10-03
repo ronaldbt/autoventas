@@ -10,12 +10,22 @@ type NuxtAppInjections =
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/revive-payload.client.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/head/runtime/plugins/unhead.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/pages/runtime/plugins/router.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-site-config/dist/runtime/app/plugins/0.siteConfig.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/browser-devtools-timing.client.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/navigation-repaint.client.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/check-outdated-build.client.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/revive-payload.server.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/chunk-reload.client.js")> &
   InjectionType<typeof import("../../node_modules/@pinia/nuxt/dist/runtime/plugin.vue3.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-seo-utils/dist/runtime/app/plugins/siteConfig.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-seo-utils/dist/runtime/app/plugins/inferSeoMetaPlugin.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-seo-utils/dist/runtime/app/plugins/titles.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-schema-org/dist/runtime/app/plugins/defaults.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-schema-org/dist/runtime/app/plugins/init.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-og-image/dist/runtime/app/plugins/og-image-canonical-urls.server.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-og-image/dist/runtime/app/plugins/route-rule-og-image.server.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-link-checker/dist/runtime/app/plugins/ui.client.js")> &
+  InjectionType<typeof import("../../node_modules/@nuxtjs/robots/dist/runtime/app/plugins/robot-meta.server.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/pages/runtime/plugins/prefetch.client.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/pages/runtime/plugins/check-if-page-unused.js")> &
   InjectionType<typeof import("../../node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.server.js")> &
@@ -25,13 +35,17 @@ type NuxtAppInjections =
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/check-if-layout-used.js")> &
   InjectionType<typeof import("../../plugins/auth.client.js")> &
   InjectionType<typeof import("../../plugins/axios.client.js")> &
-  InjectionType<typeof import("../../plugins/toastify.client.js")>
+  InjectionType<typeof import("../../plugins/fontawesome.client.js")> &
+  InjectionType<typeof import("../../plugins/toastify.client.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-seo-utils/dist/runtime/app/plugins/1.absoluteImageUrls.server.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-seo-utils/dist/runtime/app/plugins/0.routeRules.js")> &
+  InjectionType<typeof import("../../node_modules/nuxt-seo-utils/dist/runtime/app/plugins/defaults.js")>
 
 declare module '#app' {
   interface NuxtApp extends NuxtAppInjections { }
 
   interface NuxtAppLiterals {
-    pluginName: 'vue-devtools-client' | 'nuxt:revive-payload:client' | 'nuxt:head' | 'nuxt:router' | 'nuxt:browser-devtools-timing' | 'nuxt:revive-payload:server' | 'nuxt:chunk-reload' | 'pinia' | 'nuxt:global-components' | 'nuxt:prefetch' | 'nuxt:checkIfPageUnused' | 'nuxt:checkIfLayoutUsed' | 'auth-client'
+    pluginName: 'vue-devtools-client' | 'nuxt:revive-payload:client' | 'nuxt:head' | 'nuxt:router' | 'nuxt-site-config:init' | 'nuxt:browser-devtools-timing' | 'nuxt:revive-payload:server' | 'nuxt:chunk-reload' | 'pinia' | 'nuxt-seo:fallback-titles' | 'nuxt-schema-org:defaults' | 'nuxt-schema-org:init' | 'nuxt:global-components' | 'nuxt:prefetch' | 'nuxt:checkIfPageUnused' | 'nuxt:checkIfLayoutUsed' | 'auth-client' | 'nuxt-seo:defaults'
   }
 }
 

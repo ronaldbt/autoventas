@@ -87,6 +87,15 @@ try {
   console.error('❌ Error cargando rutas de remates:', e.message);
 }
 
+// 🔍 Rutas de peritajes
+try {
+  const peritajeRoutes = require('./routes/peritajeRoutes');
+  app.use('/api/peritajes', peritajeRoutes);
+  console.log('🔍 Rutas de peritajes cargadas');
+} catch (e) {
+  console.error('❌ Error cargando rutas de peritajes:', e.message);
+}
+
 
 // 📚 Rutas catálogos
 const catalogRoutes = [

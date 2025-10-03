@@ -14,7 +14,8 @@ type HydrationStrategies = {
 type LazyComponent<T> = (T & DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }>)
 
 interface _GlobalComponents {
-      'BuscadorAutos': typeof import("../components/BuscadorAutos.vue")['default']
+      'BreadcrumbSEO': typeof import("../components/BreadcrumbSEO.vue")['default']
+    'BuscadorAutos': typeof import("../components/BuscadorAutos.vue")['default']
     'FiltrosVehiculos': typeof import("../components/FiltrosVehiculos.vue")['default']
     'FooterAutoventas': typeof import("../components/FooterAutoventas.vue")['default']
     'HeaderNav': typeof import("../components/HeaderNav.vue")['default']
@@ -22,6 +23,7 @@ interface _GlobalComponents {
     'MarcasPopulares': typeof import("../components/MarcasPopulares.vue")['default']
     'PeritajeCard': typeof import("../components/PeritajeCard.vue")['default']
     'PeritajeForm': typeof import("../components/PeritajeForm.vue")['default']
+    'PeritajesNavigation': typeof import("../components/PeritajesNavigation.vue")['default']
     'Sidebar': typeof import("../components/Sidebar.vue")['default']
     'VehiculoCard': typeof import("../components/VehiculoCard.vue")['default']
     'VehiculoListItem': typeof import("../components/VehiculoListItem.vue")['default']
@@ -48,9 +50,34 @@ interface _GlobalComponents {
     'Head': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Head']
     'Html': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
     'Body': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
+    'SchemaOrgDebug': typeof import("@unhead/schema-org/vue")['SchemaOrgDebug']
+    'SchemaOrgArticle': typeof import("@unhead/schema-org/vue")['SchemaOrgArticle']
+    'SchemaOrgBreadcrumb': typeof import("@unhead/schema-org/vue")['SchemaOrgBreadcrumb']
+    'SchemaOrgComment': typeof import("@unhead/schema-org/vue")['SchemaOrgComment']
+    'SchemaOrgEvent': typeof import("@unhead/schema-org/vue")['SchemaOrgEvent']
+    'SchemaOrgFoodEstablishment': typeof import("@unhead/schema-org/vue")['SchemaOrgFoodEstablishment']
+    'SchemaOrgHowTo': typeof import("@unhead/schema-org/vue")['SchemaOrgHowTo']
+    'SchemaOrgImage': typeof import("@unhead/schema-org/vue")['SchemaOrgImage']
+    'SchemaOrgJobPosting': typeof import("@unhead/schema-org/vue")['SchemaOrgJobPosting']
+    'SchemaOrgLocalBusiness': typeof import("@unhead/schema-org/vue")['SchemaOrgLocalBusiness']
+    'SchemaOrgOrganization': typeof import("@unhead/schema-org/vue")['SchemaOrgOrganization']
+    'SchemaOrgPerson': typeof import("@unhead/schema-org/vue")['SchemaOrgPerson']
+    'SchemaOrgProduct': typeof import("@unhead/schema-org/vue")['SchemaOrgProduct']
+    'SchemaOrgQuestion': typeof import("@unhead/schema-org/vue")['SchemaOrgQuestion']
+    'SchemaOrgRecipe': typeof import("@unhead/schema-org/vue")['SchemaOrgRecipe']
+    'SchemaOrgReview': typeof import("@unhead/schema-org/vue")['SchemaOrgReview']
+    'SchemaOrgVideo': typeof import("@unhead/schema-org/vue")['SchemaOrgVideo']
+    'SchemaOrgWebPage': typeof import("@unhead/schema-org/vue")['SchemaOrgWebPage']
+    'SchemaOrgWebSite': typeof import("@unhead/schema-org/vue")['SchemaOrgWebSite']
+    'SchemaOrgMovie': typeof import("@unhead/schema-org/vue")['SchemaOrgMovie']
+    'SchemaOrgCourse': typeof import("@unhead/schema-org/vue")['SchemaOrgCourse']
+    'SchemaOrgItemList': typeof import("@unhead/schema-org/vue")['SchemaOrgItemList']
+    'SchemaOrgBook': typeof import("@unhead/schema-org/vue")['SchemaOrgBook']
+    'SchemaOrgSoftwareApp': typeof import("@unhead/schema-org/vue")['SchemaOrgSoftwareApp']
     'NuxtIsland': typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
     'NuxtRouteAnnouncer': typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']
-      'LazyBuscadorAutos': LazyComponent<typeof import("../components/BuscadorAutos.vue")['default']>
+      'LazyBreadcrumbSEO': LazyComponent<typeof import("../components/BreadcrumbSEO.vue")['default']>
+    'LazyBuscadorAutos': LazyComponent<typeof import("../components/BuscadorAutos.vue")['default']>
     'LazyFiltrosVehiculos': LazyComponent<typeof import("../components/FiltrosVehiculos.vue")['default']>
     'LazyFooterAutoventas': LazyComponent<typeof import("../components/FooterAutoventas.vue")['default']>
     'LazyHeaderNav': LazyComponent<typeof import("../components/HeaderNav.vue")['default']>
@@ -58,6 +85,7 @@ interface _GlobalComponents {
     'LazyMarcasPopulares': LazyComponent<typeof import("../components/MarcasPopulares.vue")['default']>
     'LazyPeritajeCard': LazyComponent<typeof import("../components/PeritajeCard.vue")['default']>
     'LazyPeritajeForm': LazyComponent<typeof import("../components/PeritajeForm.vue")['default']>
+    'LazyPeritajesNavigation': LazyComponent<typeof import("../components/PeritajesNavigation.vue")['default']>
     'LazySidebar': LazyComponent<typeof import("../components/Sidebar.vue")['default']>
     'LazyVehiculoCard': LazyComponent<typeof import("../components/VehiculoCard.vue")['default']>
     'LazyVehiculoListItem': LazyComponent<typeof import("../components/VehiculoListItem.vue")['default']>
@@ -84,6 +112,30 @@ interface _GlobalComponents {
     'LazyHead': LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['Head']>
     'LazyHtml': LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']>
     'LazyBody': LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']>
+    'LazySchemaOrgDebug': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgDebug']>
+    'LazySchemaOrgArticle': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgArticle']>
+    'LazySchemaOrgBreadcrumb': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgBreadcrumb']>
+    'LazySchemaOrgComment': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgComment']>
+    'LazySchemaOrgEvent': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgEvent']>
+    'LazySchemaOrgFoodEstablishment': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgFoodEstablishment']>
+    'LazySchemaOrgHowTo': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgHowTo']>
+    'LazySchemaOrgImage': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgImage']>
+    'LazySchemaOrgJobPosting': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgJobPosting']>
+    'LazySchemaOrgLocalBusiness': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgLocalBusiness']>
+    'LazySchemaOrgOrganization': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgOrganization']>
+    'LazySchemaOrgPerson': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgPerson']>
+    'LazySchemaOrgProduct': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgProduct']>
+    'LazySchemaOrgQuestion': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgQuestion']>
+    'LazySchemaOrgRecipe': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgRecipe']>
+    'LazySchemaOrgReview': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgReview']>
+    'LazySchemaOrgVideo': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgVideo']>
+    'LazySchemaOrgWebPage': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgWebPage']>
+    'LazySchemaOrgWebSite': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgWebSite']>
+    'LazySchemaOrgMovie': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgMovie']>
+    'LazySchemaOrgCourse': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgCourse']>
+    'LazySchemaOrgItemList': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgItemList']>
+    'LazySchemaOrgBook': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgBook']>
+    'LazySchemaOrgSoftwareApp': LazyComponent<typeof import("@unhead/schema-org/vue")['SchemaOrgSoftwareApp']>
     'LazyNuxtIsland': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']>
     'LazyNuxtRouteAnnouncer': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
 }

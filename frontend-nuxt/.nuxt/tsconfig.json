@@ -97,6 +97,18 @@
       "vue-demi": [
         "../node_modules/nuxt/dist/app/compat/vue-demi"
       ],
+      "#sitemap": [
+        "../node_modules/@nuxtjs/sitemap/dist/runtime"
+      ],
+      "#sitemap/*": [
+        "../node_modules/@nuxtjs/sitemap/dist/runtime/*"
+      ],
+      "#site-config": [
+        "../node_modules/nuxt-site-config/dist/runtime"
+      ],
+      "#site-config/*": [
+        "../node_modules/nuxt-site-config/dist/runtime/*"
+      ],
       "#vue-router": [
         "../node_modules/vue-router"
       ],
@@ -105,6 +117,42 @@
       ],
       "#imports": [
         "./imports"
+      ],
+      "#robots": [
+        "../node_modules/@nuxtjs/robots/dist/runtime"
+      ],
+      "#robots/*": [
+        "../node_modules/@nuxtjs/robots/dist/runtime/*"
+      ],
+      "#link-checker": [
+        "../node_modules/nuxt-link-checker/dist/runtime"
+      ],
+      "#link-checker/*": [
+        "../node_modules/nuxt-link-checker/dist/runtime/*"
+      ],
+      "#og-image": [
+        "../node_modules/nuxt-og-image/dist/runtime"
+      ],
+      "#og-image/*": [
+        "../node_modules/nuxt-og-image/dist/runtime/*"
+      ],
+      "#og-image-cache": [
+        "../node_modules/nuxt-og-image/dist/runtime/server/og-image/cache/lru"
+      ],
+      "#nuxt-og-image-utils": [
+        "../node_modules/nuxt-og-image/dist/runtime/shared"
+      ],
+      "#schema-org": [
+        "../node_modules/nuxt-schema-org/dist/runtime"
+      ],
+      "#schema-org/*": [
+        "../node_modules/nuxt-schema-org/dist/runtime/*"
+      ],
+      "#seo-utils": [
+        "../node_modules/nuxt-seo-utils/dist/runtime"
+      ],
+      "#seo-utils/*": [
+        "../node_modules/nuxt-seo-utils/dist/runtime/*"
       ],
       "#app-manifest": [
         "./manifest/meta/dev"
@@ -153,6 +201,8 @@
     "./nuxt.d.ts",
     "../node_modules/runtime",
     "../node_modules/dist/runtime",
+    "../node_modules/nuxt-site-config/dist/runtime",
+    "../node_modules/nuxt-site-config/dist/dist/runtime",
     ".."
   ],
   "exclude": [
@@ -161,6 +211,8 @@
     "../../node_modules",
     "../node_modules/runtime/server",
     "../node_modules/dist/runtime/server",
+    "../node_modules/nuxt-site-config/dist/runtime/server",
+    "../node_modules/nuxt-site-config/dist/dist/runtime/server",
     "dev"
   ]
 }

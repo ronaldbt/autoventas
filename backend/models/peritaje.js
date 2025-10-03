@@ -49,6 +49,10 @@ module.exports = (sequelize, DataTypes) => {
     numeroChasis: { type: DataTypes.STRING },
     numeroSerial: { type: DataTypes.STRING },
     tipoTransporte: { type: DataTypes.STRING },
+    tipoServicio: { 
+      type: DataTypes.ENUM('domicilio', 'sucursal'),
+      defaultValue: 'domicilio'
+    },
     asegurado: { type: DataTypes.STRING },
 
     // FRENOS

@@ -1,4 +1,20 @@
 <template>
+  <div>
+    <!-- SEO Head -->
+    <Head>
+      <Title>Solicitar Peritaje Auto - Agenda tu Inspección Vehicular | Autoventas360</Title>
+      <Meta name="description" content="Solicita tu peritaje vehicular online. Formulario fácil para agendar inspección de auto. Expertos certificados, servicio a domicilio disponible." />
+      <Meta name="keywords" content="solicitar peritaje auto, agendar peritaje vehicular, formulario peritaje auto, inspección vehículo solicitar, peritaje domicilio" />
+      <Meta property="og:title" content="Solicitar Peritaje Auto - Agenda tu Inspección Vehicular" />
+      <Meta property="og:description" content="Solicita tu peritaje vehicular online. Formulario fácil para agendar inspección de auto." />
+      <Meta property="og:type" content="website" />
+      <Meta property="og:url" content="https://autoventas360.com/peritajes/solicitar-peritaje" />
+      <Link rel="canonical" href="https://autoventas360.com/peritajes/solicitar-peritaje" />
+    </Head>
+    <!-- Menú de navegación secundario -->
+    <PeritajesNavigation />
+    
+
   <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
     <!-- Debug: Template is rendering -->
     {{ console.log('🟠 [SOLICITAR PERITAJE FORM] Template renderizando...') }}
@@ -136,7 +152,7 @@
               <h2 class="text-xl font-semibold text-slate-800">Información de Cita</h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label class="block text-sm font-medium text-slate-700 mb-2">Fecha del Peritaje *</label>
                 <input
@@ -156,16 +172,86 @@
                   class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm text-slate-900"
                 />
               </div>
-              <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-slate-700 mb-2">Dirección del Peritaje *</label>
-                <input
-                  v-model="form.direccion"
-                  type="text"
-                  placeholder="Av. Providencia 1234, Santiago, Región Metropolitana"
-                  required
-                  class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm text-slate-900"
-                />
+            </div>
+
+            <!-- Tipo de Servicio -->
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-slate-700 mb-3">Tipo de Servicio *</label>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div 
+                  @click="form.tipoServicio = 'domicilio'"
+                  :class="[
+                    'border-2 rounded-xl p-4 cursor-pointer transition-all duration-200',
+                    form.tipoServicio === 'domicilio'
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-slate-200 hover:border-slate-300'
+                  ]"
+                >
+                  <div class="flex items-center space-x-3">
+                    <div :class="[
+                      'w-12 h-12 rounded-xl flex items-center justify-center',
+                      form.tipoServicio === 'domicilio'
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-slate-100 text-slate-600'
+                    ]">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-slate-800">Peritaje a Domicilio</h3>
+                      <p class="text-sm text-slate-600">El perito va a tu ubicación</p>
+                      <p class="text-xs text-slate-500 mt-1">Costo adicional: $15.000</p>
+                    </div>
+                  </div>
+                </div>
+                <div 
+                  @click="form.tipoServicio = 'sucursal'"
+                  :class="[
+                    'border-2 rounded-xl p-4 cursor-pointer transition-all duration-200',
+                    form.tipoServicio === 'sucursal'
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-slate-200 hover:border-slate-300'
+                  ]"
+                >
+                  <div class="flex items-center space-x-3">
+                    <div :class="[
+                      'w-12 h-12 rounded-xl flex items-center justify-center',
+                      form.tipoServicio === 'sucursal'
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-slate-100 text-slate-600'
+                    ]">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-slate-800">Peritaje en Sucursal</h3>
+                      <p class="text-sm text-slate-600">Llevas el vehículo a la sucursal del perito</p>
+                      <p class="text-xs text-slate-500 mt-1">Sin costo adicional</p>
+                    </div>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            <!-- Dirección/Ubicación -->
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">
+                {{ form.tipoServicio === 'domicilio' ? 'Dirección donde realizar el peritaje *' : 'Dirección de la sucursal o punto de encuentro *' }}
+              </label>
+              <input
+                v-model="form.direccion"
+                type="text"
+                :placeholder="form.tipoServicio === 'domicilio' 
+                  ? 'Av. Providencia 1234, Santiago, Región Metropolitana' 
+                  : 'El perito te contactará para coordinar la dirección de la sucursal'"
+                required
+                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm text-slate-900"
+              />
+              <p v-if="form.tipoServicio === 'sucursal'" class="text-xs text-slate-500 mt-1">
+                * El perito te contactará para coordinar la dirección exacta de la sucursal
+              </p>
             </div>
           </div>
 
@@ -235,6 +321,7 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -265,6 +352,7 @@ const form = ref({
   email: '',
   fecha: '',
   hora: '',
+  tipoServicio: 'domicilio', // Por defecto domicilio
   direccion: '',
   motivo: '',
   comentarios: ''

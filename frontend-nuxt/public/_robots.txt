@@ -43,7 +43,7 @@ Disallow: /*?*sort=
 Disallow: /*?*page=
 
 # Crawl-delay para no sobrecargar el servidor
-Crawl-delay: 1
+# Crawl-delay: 1
 
 # Sitemap location
 Sitemap: https://autoventas360.com/sitemap.xml
