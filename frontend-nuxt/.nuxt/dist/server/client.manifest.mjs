@@ -1,1 +1,0 @@
-export { default } from "file:///Users/j/Documents/proyectos/autoventas/autoventas/frontend-nuxt/node_modules/@nuxt/vite-builder/dist/runtime/client.manifest.mjs"

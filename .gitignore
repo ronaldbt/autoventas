@@ -1,0 +1,15 @@
+# Dependencias y builds
+node_modules/
+.npm/
+.pnpm-store/
+.nuxt/
+dist/
+.output/
+coverage/
+# Entornos
+.env*
+# SO
+.DS_Store
+*.log
+# Certificados
+letsencrypt/
