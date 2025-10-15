@@ -51,10 +51,10 @@
       <div class="max-w-6xl mx-auto">
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl shadow-blue-500/10 border border-white/20 overflow-hidden">
           <!-- Filtros principales -->
-          <div class="grid grid-cols-1 md:grid-cols-5 gap-4 p-8">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-4 p-8">
             <div class="space-y-2">
               <label class="text-sm font-medium text-slate-700">Categoría</label>
-              <select v-model="categoria" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm">
+              <select v-model="categoria" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white text-slate-900">
                 <option value="">Todas las categorías</option>
                 <option value="auto">Auto</option>
                 <option value="suv">SUV</option>
@@ -64,27 +64,36 @@
 
             <div class="space-y-2">
               <label class="text-sm font-medium text-slate-700">Marca</label>
-              <select v-model="marcaId" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm">
+              <select v-model="marcaId" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white text-slate-900">
                 <option value="">Todas las marcas</option>
                 <option v-for="m in marcas" :key="m.id" :value="m.id">{{ m.nombre }}</option>
               </select>
             </div>
 
             <div class="space-y-2">
+              <label class="text-sm font-medium text-slate-700">Estado</label>
+              <select v-model="estado" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white text-slate-900">
+                <option value="usado">Usado</option>
+                <option value="nuevo">Nuevo</option>
+                <option value="certificado">Certificado</option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
               <label class="text-sm font-medium text-slate-700">Modelo</label>
-              <input v-model="modelo" type="text" placeholder="Ej: Corolla, Civic..." class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm" />
+              <input v-model="modelo" type="text" placeholder="Ej: Corolla, Civic..." class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white text-slate-900 placeholder-slate-400" />
             </div>
 
             <div class="space-y-2">
               <label class="text-sm font-medium text-slate-700">Palabras clave</label>
-              <input v-model="palabrasClave" type="text" placeholder="Ej: automático, 4x4..." class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm" />
+              <input v-model="palabrasClave" type="text" placeholder="Ej: automático, 4x4..." class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white text-slate-900 placeholder-slate-400" />
             </div>
             
             <div class="space-y-2">
               <label class="text-sm font-medium text-slate-700">&nbsp;</label>
-                      <button
+              <button
           @click="buscarVehiculos"
-          class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+          class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-orange-500/40"
         >
                 <span class="flex items-center justify-center space-x-2">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +110,7 @@
             <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
               <div class="space-y-2">
                 <label class="text-xs font-medium text-slate-300">Región</label>
-                <select v-model="regionId" class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm">
+                <select v-model="regionId" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-sm text-white">
                   <option value="">Todas las regiones</option>
                   <option v-for="r in regiones" :key="r.id" :value="r.id">{{ r.nombre }}</option>
                 </select>
@@ -109,7 +118,7 @@
 
               <div class="space-y-2">
                 <label class="text-xs font-medium text-slate-300">Año mínimo</label>
-                <select v-model="anioMin" class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm">
+                <select v-model="anioMin" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-sm text-white">
                   <option value="">Cualquier año</option>
                   <option v-for="anio in 40" :key="anio" :value="1985 + anio">{{ 1985 + anio }}</option>
                 </select>
@@ -117,7 +126,7 @@
 
               <div class="space-y-2">
                 <label class="text-xs font-medium text-slate-300">Año máximo</label>
-                <select v-model="anioMax" class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm">
+                <select v-model="anioMax" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-sm text-white">
                   <option value="">Cualquier año</option>
                   <option v-for="anio in 40" :key="anio" :value="1985 + anio">{{ 1985 + anio }}</option>
                 </select>
@@ -125,7 +134,7 @@
 
               <div class="space-y-2">
                 <label class="text-xs font-medium text-slate-300">Precio mínimo</label>
-                <select v-model="precioMin" class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm">
+                <select v-model="precioMin" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-sm text-white">
                   <option value="">Cualquier precio</option>
                   <option :value="1000000">$1.000.000</option>
                   <option :value="5000000">$5.000.000</option>
@@ -135,7 +144,7 @@
 
               <div class="space-y-2">
                 <label class="text-xs font-medium text-slate-300">Precio máximo</label>
-                <select v-model="precioMax" class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm">
+                <select v-model="precioMax" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-sm text-white">
                   <option value="">Cualquier precio</option>
                   <option :value="10000000">$10.000.000</option>
                   <option :value="20000000">$20.000.000</option>
@@ -145,7 +154,7 @@
 
               <div class="space-y-2">
                 <label class="text-xs font-medium text-slate-300">&nbsp;</label>
-                <button class="w-full px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium rounded-lg transition-all duration-200 text-sm transform hover:scale-105">
+                <button class="w-full px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium rounded-lg transition-all duration-200 text-sm transform hover:scale-105 shadow-md hover:shadow-orange-500/40">
                   Filtros
                 </button>
               </div>
@@ -159,7 +168,7 @@
 
   
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { catalogoService } from '~/services/catalogoService'
 import { vehiculoService } from '~/services/vehiculoService'
@@ -170,6 +179,7 @@ const comunaId = ref('')
 const marcaId = ref('')
 const modelo = ref('')
 const anio = ref('')
+const estado = ref('usado')
 
 // Filtros secundarios (van como query params)
 const categoria = ref('')
@@ -233,6 +243,16 @@ async function buscarVehiculos() {
   if (modelo.value) slug.push(slugify(modelo.value))
   if (anio.value) slug.push(anio.value)
 
+  // Insertar estado entre comuna y marca según estructura requerida
+  // Reconstruimos el slug en el orden: región/comuna/estado/marca/modelo/año
+  const nuevoSlug = []
+  if (region) nuevoSlug.push(slugify(region.nombre))
+  if (comuna) nuevoSlug.push(slugify(comuna.nombre))
+  nuevoSlug.push(slugify(estado.value || 'usado'))
+  if (marca) nuevoSlug.push(slugify(marca.nombre))
+  if (modelo.value) nuevoSlug.push(slugify(modelo.value))
+  if (anio.value) nuevoSlug.push(anio.value)
+
   // Query params
   const query = {
     categoria: categoria.value || undefined,
@@ -245,7 +265,7 @@ async function buscarVehiculos() {
 
   try {
     await router.push({
-      path: `/vehiculos/${slug.join('/')}`,
+      path: `/vehiculos/${(nuevoSlug.length ? nuevoSlug : slug).join('/')}`,
       query
     })
   } catch (error) {

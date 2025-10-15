@@ -12,7 +12,8 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@nuxtjs/seo',
-    '@nuxtjs/sitemap'
+    '@nuxtjs/sitemap',
+    '@nuxtjs/robots'
   ],
   
   // ✅ Configuración de Vite para Tailwind CSS v4
@@ -27,10 +28,13 @@ export default defineNuxtConfig({
     '@': './'
   },
 
-  // ✅ Configuración de variables públicas
+  // ✅ Configuración de variables de entorno (cliente y servidor)
   runtimeConfig: {
+    // Disponible solo en el servidor (SSR)
+    apiBaseInternal: process.env.NUXT_API_BASE_INTERNAL || 'http://backend:3001/api',
+    // Disponible en cliente y servidor
     public: {
-      apiBase: 'http://localhost:3001/api'
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://api.autoventas360.cl/api'
     }
   },
 
@@ -52,10 +56,12 @@ export default defineNuxtConfig({
     ]
   },
 
-  // ✅ Configuración Sitemap
+  // ✅ Configuración Sitemap (dinámico, con inventario)
   sitemap: {
-    hostname: 'https://autoventas360.com',
+    siteUrl: 'https://autoventas360.com',
     gzip: true,
+    autoLastmod: true,
+    defaults: { changefreq: 'daily', priority: 0.7 },
     exclude: [
       '/admin/**',
       '/cliente/**',
@@ -66,232 +72,109 @@ export default defineNuxtConfig({
       '/register',
       '/unauthorized'
     ],
-    routes: async () => {
-      const routes = []
-      
+    urls: async () => {
+      const urls = []
+
+      // 1) Páginas estáticas principales
+      urls.push(
+        { url: '/', priority: 1.0 },
+        { url: '/vehiculos', priority: 0.9 },
+        { url: '/remates', changefreq: 'weekly' },
+        { url: '/servicios', changefreq: 'monthly' },
+        { url: '/noticias', changefreq: 'weekly' },
+        { url: '/nuevos' },
+        { url: '/electricos' },
+        { url: '/analisis' },
+        { url: '/ayuda' },
+        { url: '/vender' }
+      )
+
+      // 2) Categorías por tipo
+      const tiposVehiculos = ['suvs','sedanes','camionetas','hatchback','station-wagon','coupe']
+      tiposVehiculos.forEach(tipo => {
+        urls.push({ url: `/vehiculos/${tipo}-usados` })
+      })
+
+      // 3) Categorías por marca (populares)
+      const marcasPopulares = ['toyota','chevrolet','hyundai','suzuki','mazda','nissan','kia','honda','ford','volkswagen','peugeot','bmw']
+      marcasPopulares.forEach(marca => {
+        urls.push({ url: `/vehiculos/marca-${marca}` })
+      })
+
+      // 4) Rangos de precio
+      const rangosPrecio = ['bajo-5-millones','entre-5-10-millones','entre-10-15-millones','entre-15-20-millones','sobre-20-millones']
+      rangosPrecio.forEach(r => urls.push({ url: `/vehiculos/precio-${r}` }))
+
+      // 5) Ubicaciones jerárquicas más usadas
+      const ubicaciones = [
+        { region: 'metropolitana', comunas: ['santiago','providencia','las-condes','vitacura','nunoa','maipu','puente-alto'] },
+        { region: 'valparaiso', comunas: ['valparaiso','vina-del-mar'] },
+        { region: 'biobio', comunas: ['concepcion'] }
+      ]
+      ubicaciones.forEach(({ region, comunas }) => {
+        comunas.forEach(comuna => {
+          urls.push(
+            { url: `/vehiculos/${region}/${comuna}` },
+            { url: `/vehiculos/${region}/${comuna}/usado` },
+            { url: `/vehiculos/${region}/${comuna}/nuevo`, changefreq: 'weekly', priority: 0.6 }
+          )
+        })
+      })
+
+      // 6) Landings de peritajes
+      urls.push(
+        { url: '/peritajes', priority: 0.9 },
+        { url: '/peritajes/solicitar-peritaje', priority: 0.9 },
+        { url: '/peritajes/revision-precompra-auto', priority: 0.95 },
+        { url: '/peritajes/inspeccion-auto-usado' },
+        { url: '/peritajes/peritaje-auto-electrico' },
+        { url: '/peritajes/detectar-auto-clonado' },
+        { url: '/peritajes/verificacion-kilometraje' },
+        { url: '/peritajes/tipos' },
+        { url: '/peritajes/precios', changefreq: 'weekly' },
+        { url: '/peritajes/ciudades' },
+        { url: '/peritajes/santiago' }
+      )
+      const comunasSantiago = ['santiago','providencia','las-condes','vitacura','nunoa','maipu','puente-alto','la-florida','san-miguel','la-reina','macul','penalolen']
+      comunasSantiago.forEach(c => urls.push({ url: `/peritajes/santiago/${c}`, changefreq: 'weekly' }))
+
+      // 7) Inventario desde API (detalles)
       try {
-        // Aquí se pueden agregar rutas dinámicas desde la API
-        // Por ejemplo, rutas de vehículos, marcas, ciudades, etc.
-        
-        // Rutas de páginas principales
-        routes.push(
-          { url: '/', changefreq: 'daily', priority: 1.0 },
-          { url: '/vehiculos', changefreq: 'daily', priority: 0.9 },
-          { url: '/remates', changefreq: 'weekly', priority: 0.8 },
-          { url: '/peritajes', changefreq: 'daily', priority: 0.9 },
-          { url: '/servicios', changefreq: 'monthly', priority: 0.7 },
-          { url: '/noticias', changefreq: 'weekly', priority: 0.7 },
-          { url: '/nuevos', changefreq: 'daily', priority: 0.8 },
-          { url: '/electricos', changefreq: 'daily', priority: 0.8 },
-          { url: '/analisis', changefreq: 'weekly', priority: 0.6 }
-        )
+        const apiBase = process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3001/api'
+        const params = new URLSearchParams({ limit: '5000', fields: 'id,slug,region,comuna,marca,modelo,ano,combustible' })
+        const res = await fetch(`${apiBase}/vehiculos?${params.toString()}`)
+        const json = await res.json()
+        const vehiculos = Array.isArray(json?.data) ? json.data : (Array.isArray(json) ? json : [])
 
-        // NUEVAS RUTAS DE PERITAJES - ALTA PRIORIDAD SEO
-        routes.push(
-          // Páginas principales de peritajes
-          { url: '/peritajes/solicitar', changefreq: 'daily', priority: 0.9 },
-          { url: '/peritajes/precios', changefreq: 'weekly', priority: 0.9 },
-          { url: '/peritajes/como-funciona', changefreq: 'monthly', priority: 0.8 },
-          { url: '/peritajes/tipos', changefreq: 'weekly', priority: 0.8 },
-          
-          // Tipos de peritaje
-          { url: '/peritajes/tipos/seguros', changefreq: 'weekly', priority: 0.8 },
-          { url: '/peritajes/tipos/compra-venta', changefreq: 'weekly', priority: 0.8 },
-          { url: '/peritajes/tipos/judicial', changefreq: 'weekly', priority: 0.7 },
-          { url: '/peritajes/tipos/tasacion', changefreq: 'weekly', priority: 0.7 }
-        )
-
-        // PÁGINAS DE KEYWORDS DE ALTA CONVERSIÓN (NUEVAS)
-        routes.push(
-          // Páginas principales de alta conversión
-          { url: '/peritajes/revision-precompra-auto', changefreq: 'daily', priority: 0.95 },
-          { url: '/peritajes/inspeccion-auto-usado', changefreq: 'daily', priority: 0.9 },
-          { url: '/peritajes/solicitar-peritaje', changefreq: 'daily', priority: 0.9 },
-          
-          // Páginas especializadas
-          { url: '/peritajes/scanner-automotriz-domicilio', changefreq: 'weekly', priority: 0.85 },
-          { url: '/peritajes/verificacion-kilometraje', changefreq: 'weekly', priority: 0.8 },
-          { url: '/peritajes/detectar-auto-clonado', changefreq: 'weekly', priority: 0.8 },
-          { url: '/peritajes/peritaje-auto-electrico', changefreq: 'weekly', priority: 0.85 },
-          { url: '/peritajes/agendar-peritaje-auto', changefreq: 'daily', priority: 0.9 }
-        )
-
-        // Página principal de ciudades
-        routes.push({
-          url: '/peritajes/ciudades',
-          changefreq: 'weekly',
-          priority: 0.8
+        vehiculos.forEach(v => {
+          if (v?.id) urls.push({ url: `/vehiculos/${v.id}`, priority: 0.8 })
+          if (v?.slug) urls.push({ url: `/vehiculos/seo-${v.slug}` })
+          if (v?.region && v?.comuna && v?.marca && v?.ano && v?.modelo && v?.combustible) {
+            urls.push({ url: `/vehiculos/${v.region}/${v.comuna}/usado/${v.marca}/${v.ano}/${v.modelo}/${v.combustible}` })
+          }
         })
-
-        // 20 ciudades principales de Chile para peritajes (expandido)
-        const ciudadesPeritajes = [
-          'santiago', 'valparaiso', 'concepcion', 'la-serena', 
-          'antofagasta', 'temuco', 'rancagua', 'talca', 
-          'arica', 'puerto-montt', 'iquique', 'vina-del-mar',
-          'coquimbo', 'chillan', 'valdivia', 'osorno',
-          'calama', 'copiapó', 'linares', 'curicó'
-        ]
-        ciudadesPeritajes.forEach(ciudad => {
-          routes.push({
-            url: `/peritajes/ciudades/${ciudad}`,
-            changefreq: 'weekly',
-            priority: ciudad === 'santiago' ? 0.9 : 0.7
-          })
-        })
-
-        // Guías de peritajes (contenido SEO) - EXPANDIDO CON NUEVAS KEYWORDS
-        const guiasPeritajes = [
-          // Guías originales
-          'que-es-peritaje-vehicular',
-          'cuando-necesito-peritaje', 
-          'diferencia-perito-mecanico',
-          'costo-real-peritaje-2024',
-          'peritaje-auto-usado-guia',
-          'documentos-necesarios',
-          'errores-comunes-peritaje',
-          'tecnologia-peritaje-moderna',
-          'casos-estudio-reales',
-          'faq-peritajes-chile',
-          
-          // NUEVAS GUÍAS CON KEYWORDS DE ALTA CONVERSIÓN
-          'que-revisar-auto-usado-compra',
-          'como-detectar-auto-chocado',
-          'señales-motor-desgastado',
-          'checklist-compra-auto-usado',
-          'errores-comunes-comprar-auto',
-          'peritaje-vs-revision-tecnica',
-          'auto-electrico-que-revisar',
-          'como-saber-si-auto-esta-bien',
-          'detectar-estafa-compra-auto',
-          'kilometraje-adulterado-como-detectar',
-          'documentos-compra-auto-usado-chile',
-          'problemas-tipicos-autos-usados',
-          'vale-la-pena-peritaje-auto-usado',
-          'mejor-servicio-peritaje-santiago',
-          'donde-hacer-peritaje-auto-chile'
-        ]
-        guiasPeritajes.forEach(guia => {
-          routes.push({
-            url: `/peritajes/guias/${guia}`,
-            changefreq: 'monthly',
-            priority: 0.6
-          })
-        })
-
-        // MARCAS ESPECÍFICAS PARA PERITAJES (NUEVA SECCIÓN)
-        const marcasPeritajes = [
-          'toyota', 'chevrolet', 'hyundai', 'suzuki', 'mazda', 'nissan', 
-          'kia', 'honda', 'ford', 'volkswagen', 'peugeot', 'citroën',
-          'bmw', 'mercedes-benz', 'audi', 'subaru', 'mitsubishi', 'jeep'
-        ]
-        marcasPeritajes.forEach(marca => {
-          routes.push({
-            url: `/peritajes/marcas/${marca}`,
-            changefreq: 'weekly',
-            priority: ['toyota', 'chevrolet', 'hyundai'].includes(marca) ? 0.8 : 0.6
-          })
-        })
-
-        // Rutas de categorías por marca (más populares) - NUEVA ESTRUCTURA
-        const marcasPopulares = [
-          'toyota', 'ford', 'chevrolet', 'mazda', 'bmw', 
-          'peugeot', 'suzuki', 'volkswagen', 'kia', 'nissan'
-        ]
-        marcasPopulares.forEach(marca => {
-          routes.push({
-            url: `/vehiculos/marca-${marca}`,
-            changefreq: 'daily',
-            priority: 0.8
-          })
-        })
-
-        // Rutas de categorías por tipo - NUEVA ESTRUCTURA
-        const tiposVehiculos = [
-          'suvs', 'sedanes', 'camionetas', 
-          'hatchback', 'station-wagon', 'coupe'
-        ]
-        tiposVehiculos.forEach(tipo => {
-          routes.push({
-            url: `/vehiculos/${tipo}-usados`,
-            changefreq: 'daily',
-            priority: 0.7
-          })
-        })
-
-        // Rutas jerárquicas por ubicación (principales combinaciones)
-        const ubicacionesPopulares = [
-          { region: 'metropolitana', comuna: 'santiago' },
-          { region: 'metropolitana', comuna: 'providencia' },
-          { region: 'metropolitana', comuna: 'las-condes' },
-          { region: 'valparaiso', comuna: 'valparaiso' },
-          { region: 'valparaiso', comuna: 'vina-del-mar' },
-          { region: 'biobio', comuna: 'concepcion' }
-        ]
-        ubicacionesPopulares.forEach(({region, comuna}) => {
-          routes.push({
-            url: `/vehiculos/${region}/${comuna}`,
-            changefreq: 'daily',
-            priority: 0.7
-          })
-          routes.push({
-            url: `/vehiculos/${region}/${comuna}/usado`,
-            changefreq: 'daily',
-            priority: 0.7
-          })
-          routes.push({
-            url: `/vehiculos/${region}/${comuna}/nuevo`,
-            changefreq: 'daily',
-            priority: 0.6
-          })
-        })
-
-        // Rutas de rangos de precios - NUEVA ESTRUCTURA
-        const rangosPrecio = [
-          'bajo-5-millones', 'entre-5-10-millones', 
-          'entre-10-15-millones', 'entre-15-20-millones',
-          'sobre-20-millones'
-        ]
-        rangosPrecio.forEach(rango => {
-          routes.push({
-            url: `/vehiculos/precio-${rango}`,
-            changefreq: 'daily', 
-            priority: 0.6
-          })
-        })
-
-        // PÁGINAS LOCALES POR COMUNA DE SANTIAGO (NUEVA ESTRUCTURA)
-        const comunasSantiago = [
-          'santiago', 'providencia', 'las-condes', 'vitacura', 'nunoa',
-          'la-florida', 'maipu', 'puente-alto', 'san-miguel', 'la-reina',
-          'penalolen', 'macul', 'san-bernardo', 'quilicura', 'estacion-central',
-          'independencia', 'recoleta', 'conchali', 'renca', 'quinta-normal',
-          'cerro-navia', 'pudahuel', 'lo-prado', 'cerrillos', 'maipú',
-          'el-bosque', 'pedro-aguirre-cerda', 'san-joaquin', 'san-ramon',
-          'la-granja', 'la-pintana', 'san-miguel', 'lo-espejo'
-        ]
-        
-        // Páginas de Santiago (nueva estructura)
-        routes.push({
-          url: '/peritajes/santiago',
-          changefreq: 'weekly',
-          priority: 0.8
-        })
-        
-        // Páginas locales de precios por comuna (nueva ubicación)
-        comunasSantiago.forEach(comuna => {
-          routes.push({
-            url: `/peritajes/santiago/${comuna}`,
-            changefreq: 'weekly',
-            priority: ['santiago', 'providencia', 'las-condes', 'vitacura', 'nunoa'].includes(comuna) ? 0.8 : 0.7
-          })
-        })
-
       } catch (error) {
-        console.error('Error generando sitemap:', error)
+        console.warn('No se pudo cargar inventario para sitemap', error)
       }
 
-      return routes
+      return urls
     }
+  },
+
+  // ✅ Robots dinámico
+  robots: {
+    rules: [
+      {
+        userAgent: '*',
+        allow: ['/', '/vehiculos/', '/peritajes/', '/remates/', '/nuevos/', '/electricos/', '/servicios/', '/noticias/', '/analisis/']
+      },
+      {
+        userAgent: '*',
+        disallow: ['/admin/', '/cliente/', '/automotora/', '/perito/', '/publicista/', '/login', '/register', '/unauthorized', '/api/', '/_nuxt/', '/.nuxt/']
+      },
+      { userAgent: '*', disallow: ['/*?*precio_min=', '/*?*precio_max=', '/*?*km_min=', '/*?*km_max=', '/*?*sort=', '/*?*page='] }
+    ],
+    sitemap: ['https://autoventas360.cl/sitemap.xml']
   },
 
   // ✅ Head global

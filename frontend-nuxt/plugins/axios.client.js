@@ -5,13 +5,9 @@ import { useAuthStore } from '../stores/authStore'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
-
-  console.log('🛰️ Configuración detectada en axios.client.js → baseURL:', config.public.apiBase)
-
-  const api = axios.create({
-    baseURL: config.public.apiBase,
-    withCredentials: false
-  })
+  // Cliente (navegador): usar dominio público
+  const baseURL = config.public.apiBase
+  const api = axios.create({ baseURL, withCredentials: false })
 
   // Interceptor para agregar el token si existe
   api.interceptors.request.use((req) => {

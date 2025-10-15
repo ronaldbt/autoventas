@@ -3,6 +3,10 @@ FROM node:20-alpine as builder
 # Set working directory
 WORKDIR /app
 
+# Set environment variables for UTF-8
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
 # Copy package files
 COPY package*.json ./
 
@@ -12,11 +16,15 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build the application
+# Build the application with UTF-8 support
 RUN npm run build
 
 # Production stage
 FROM node:20-alpine
+
+# Set environment variables for UTF-8
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 # Set working directory
 WORKDIR /app

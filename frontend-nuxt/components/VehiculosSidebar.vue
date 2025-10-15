@@ -27,7 +27,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Marca</label>
           <select 
             v-model="filtros.marcaId" 
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
           >
             <option value="">Seleccionar marca</option>
             <option v-for="marca in marcas" :key="marca.id" :value="marca.id">
@@ -43,7 +43,7 @@
             v-model="filtros.modelo"
             type="text"
             placeholder="Ingresa el modelo"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900 placeholder-slate-400"
           />
         </div>
 
@@ -53,7 +53,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Año desde</label>
             <select 
               v-model="filtros.anioMin" 
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
             >
               <option value="">Desde</option>
               <option v-for="anio in generarAnios()" :key="anio" :value="anio">{{ anio }}</option>
@@ -63,7 +63,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Año hasta</label>
             <select 
               v-model="filtros.anioMax" 
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
             >
               <option value="">Hasta</option>
               <option v-for="anio in generarAnios()" :key="anio" :value="anio">{{ anio }}</option>
@@ -78,7 +78,7 @@
             v-model="filtros.version"
             type="text"
             placeholder="Ejemplo: Sport, Limited, Premium"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900 placeholder-slate-400"
           />
         </div>
       </div>
@@ -207,7 +207,7 @@
       <div v-if="expandedSections.region" class="px-4 pb-4">
         <select 
           v-model="filtros.regionId" 
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
         >
           <option value="">Seleccionar región</option>
           <option v-for="region in regiones" :key="region.id" :value="region.id">
@@ -241,7 +241,7 @@
       <div v-if="expandedSections.condition" class="px-4 pb-4">
         <select 
           v-model="filtros.condicion" 
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
         >
           <option value="">Cualquier condición</option>
           <option value="nuevo">Nuevo</option>
@@ -275,7 +275,7 @@
       <div v-if="expandedSections.bodyType" class="px-4 pb-4">
         <select 
           v-model="filtros.carroceriaId" 
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
         >
           <option value="">Any body type</option>
           <option v-for="carroceria in carrocerias" :key="carroceria.id" :value="carroceria.id">
@@ -404,9 +404,9 @@
         <!-- Transmisión -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Transmisión</label>
-          <select 
+        <select 
             v-model="filtros.transmisionId" 
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
           >
             <option value="">Cualquier transmisión</option>
             <option v-for="transmision in transmisiones" :key="transmision.id" :value="transmision.id">
@@ -418,9 +418,9 @@
         <!-- Combustible -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Combustible</label>
-          <select 
+        <select 
             v-model="filtros.combustibleId" 
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
           >
             <option value="">Cualquier combustible</option>
             <option v-for="combustible in combustibles" :key="combustible.id" :value="combustible.id">
@@ -471,7 +471,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Color exterior</label>
           <select 
             v-model="filtros.colorExterior" 
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
           >
             <option value="">Cualquier color</option>
             <option value="blanco">Blanco</option>
@@ -494,7 +494,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Color interior</label>
           <select 
             v-model="filtros.colorInterior" 
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
           >
             <option value="">Cualquier color</option>
             <option value="negro">Negro</option>
@@ -532,7 +532,7 @@
       <div v-if="expandedSections.status" class="px-4 pb-4">
         <select 
           v-model="filtros.estado" 
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
+          class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900"
         >
           <option value="ACTIVO">Activos</option>
           <option value="VENDIDO">Vendidos</option>

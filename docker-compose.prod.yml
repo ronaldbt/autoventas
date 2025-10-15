@@ -1,140 +1,134 @@
-version: '3.8'
 
 services:
-  # PostgreSQL Database - Production
-  postgres:
-    image: postgres:15-alpine
-    container_name: autoventas-postgres-prod
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-      - postgres_data_prod:/var/lib/postgresql/data/pgdata
-      - ./backup:/backup
-    networks:
-      - autoventas-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    # No exposed ports in production for security
-
-  # Backend API - Production
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: autoventas-backend-prod
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      PORT: 3001
-      JWT_SECRET: ${JWT_SECRET}
-      NODE_ENV: production
-    networks:
-      - autoventas-network
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-    volumes:
-      - ./backend/uploads:/app/uploads
-      - /var/log/autoventas:/app/logs
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend-prod.rule=Host(`api.${DOMAIN}`)"
-      - "traefik.http.routers.backend-prod.tls=true"
-      - "traefik.http.routers.backend-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.services.backend-prod.loadbalancer.server.port=3001"
-      - "traefik.http.routers.backend-prod.middlewares=auth-backend"
-      - "traefik.http.middlewares.auth-backend.headers.customrequestheaders.X-Forwarded-Proto=https"
-
-  # Frontend Nuxt - Production
-  frontend:
-    build:
-      context: ./frontend-nuxt
-      dockerfile: Dockerfile
-    container_name: autoventas-frontend-prod
-    environment:
-      NUXT_PUBLIC_API_BASE: https://api.${DOMAIN}/api
-      NODE_ENV: production
-    networks:
-      - autoventas-network
-    depends_on:
-      - backend
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend-prod.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)"
-      - "traefik.http.routers.frontend-prod.tls=true"
-      - "traefik.http.routers.frontend-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.services.frontend-prod.loadbalancer.server.port=3000"
-      - "traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www.${DOMAIN}/(.*)"
-      - "traefik.http.middlewares.www-redirect.redirectregex.replacement=https://${DOMAIN}/$${1}"
-      - "traefik.http.routers.frontend-prod.middlewares=www-redirect"
-
-  # Traefik Reverse Proxy - Production
   traefik:
-    image: traefik:v3.0
-    container_name: autoventas-traefik-prod
+    image: traefik:v3.1
+    container_name: autoventas-traefik
+    restart: unless-stopped
+    command:
+      - --api.dashboard=true
+      - --log.level=DEBUG
+      - --accesslog=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.letsencrypt.acme.email=admin@autoventas360.com
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - traefik_letsencrypt_prod:/letsencrypt
-      - /var/log/traefik:/var/log/traefik
-    networks:
-      - autoventas-network
-    restart: unless-stopped
-    environment:
-      - TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_EMAIL=${ACME_EMAIL}
+      - traefik-letsencrypt:/letsencrypt
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.dashboard-prod.rule=Host(`traefik.${DOMAIN}`)"
-      - "traefik.http.routers.dashboard-prod.tls=true"
-      - "traefik.http.routers.dashboard-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.dashboard-prod.service=api@internal"
-      - "traefik.http.routers.dashboard-prod.middlewares=dashboard-auth"
-      - "traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_AUTH}"
-
-  # Optional: Database backup service
-  backup:
-    image: postgres:15-alpine
-    container_name: autoventas-backup
-    environment:
-      PGPASSWORD: ${DB_PASSWORD}
-    volumes:
-      - ./backup:/backup
-      - ./scripts:/scripts
+      - "traefik.http.routers.traefik.rule=Host(`traefik.autoventas360.cl`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik.service=api@internal"
+      # Seguridad básica opcional (usuario: admin, pass: admin cambiala luego)
+      # - "traefik.http.routers.traefik.middlewares=traefik-auth"
+      # - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$apr1$5qYH9w5L$6k1w2pQkU0v6zK5x8Qq6b/"
     networks:
       - autoventas-network
+
+  postgres:
+    image: postgres:15
+    container_name: autoventas-postgres
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    environment:
+      POSTGRES_DB: autoventas360
+      POSTGRES_USER: autoventas_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-parol123}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - autoventas-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U autoventas_user -d autoventas360"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: autoventas-backend
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    environment:
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: autoventas360
+      DB_NAME_PROD: autoventas360
+      DB_USER: autoventas_user
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this}
+      PORT: 3001
     depends_on:
-      - postgres
-    restart: "no"
-    entrypoint: |
-      sh -c '
-        while true; do
-          pg_dump -h postgres -U ${DB_USER} -d ${DB_NAME} > /backup/autoventas_$$(date +%Y%m%d_%H%M%S).sql
-          find /backup -name "autoventas_*.sql" -mtime +7 -delete
-          sleep 86400
-        done
-      '
+      postgres:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.autoventas360.cl`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.priority=10"
+      - "traefik.http.services.backend.loadbalancer.server.port=3001"
+      # CORS headers middleware
+      - "traefik.http.middlewares.backend-cors.headers.accessControlAllowOriginList=https://autoventas360.cl,https://www.autoventas360.cl"
+      - "traefik.http.middlewares.backend-cors.headers.accessControlAllowMethods=GET,POST,PUT,PATCH,DELETE,OPTIONS"
+      - "traefik.http.middlewares.backend-cors.headers.accessControlAllowHeaders=Authorization,Content-Type,Accept,X-Requested-With"
+      - "traefik.http.middlewares.backend-cors.headers.accessControlAllowCredentials=false"
+      - "traefik.http.middlewares.backend-cors.headers.addVaryHeader=true"
+      - "traefik.http.routers.backend.middlewares=backend-cors@docker"
+    networks:
+      - autoventas-network
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3001/health', r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build: 
+      context: ./frontend-nuxt
+      dockerfile: Dockerfile
+    container_name: autoventas-frontend
+    restart: unless-stopped
+    environment:
+      NUXT_PUBLIC_API_BASE: https://api.autoventas360.cl/api
+      NUXT_API_BASE_INTERNAL: http://backend:3001/api
+      NODE_ENV: production
+    depends_on:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`autoventas360.cl`) || Host(`www.autoventas360.cl`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.priority=10"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+    networks:
+      - autoventas-network
+
+volumes:
+  postgres-data:
+  traefik-letsencrypt:
 
 networks:
   autoventas-network:
     driver: bridge
-
-volumes:
-  postgres_data_prod:
-    driver: local
-  traefik_letsencrypt_prod:
-    driver: local

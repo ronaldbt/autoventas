@@ -12,7 +12,7 @@
                   v-model="busquedaPrincipal"
                   type="text"
                   placeholder="Renault Talisman Intense 2016"
-                  class="w-full px-4 py-2 pl-10 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  class="w-full px-4 py-2 pl-10 pr-12 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-slate-900 placeholder-slate-400"
                   @keyup.enter="buscarConFiltros"
                 />
                 <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,6 +55,39 @@
 
           <!-- Contenido principal -->
           <div class="flex-1">
+          <!-- Breadcrumbs SEO -->
+          <nav aria-label="Breadcrumb" class="mb-3">
+            <ol class="flex flex-wrap items-center gap-1 text-sm text-gray-500">
+              <li>
+                <NuxtLink :to="{ path: '/vehiculos', query: {} }" class="hover:text-gray-700">Vehículos</NuxtLink>
+              </li>
+              <li v-for="(item, idx) in breadcrumbItems" :key="idx" class="flex items-center">
+                <svg class="mx-2 h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <NuxtLink :to="{ path: item.href, query: {} }" class="hover:text-gray-700" :aria-current="idx === breadcrumbItems.length - 1 ? 'page' : undefined">{{ item.label }}</NuxtLink>
+              </li>
+            </ol>
+          </nav>
+
+          <!-- Chips de contexto cuando faltan región o comuna -->
+          <div v-if="noRegion || noComuna" class="mb-3 flex gap-2">
+            <NuxtLink
+              v-if="noRegion"
+              :to="{ path: '/vehiculos', query: {} }"
+              class="inline-flex items-center rounded-full bg-gray-100 text-gray-700 px-3 py-1 text-xs font-medium hover:bg-gray-200 transition"
+            >
+              Todas las regiones
+            </NuxtLink>
+            <NuxtLink
+              v-if="!noRegion && noComuna"
+              :to="{ path: `/vehiculos/${slug[0]}`, query: {} }"
+              class="inline-flex items-center rounded-full bg-gray-100 text-gray-700 px-3 py-1 text-xs font-medium hover:bg-gray-2 00 transition"
+            >
+              Todas las comunas
+            </NuxtLink>
+          </div>
+
             <!-- Header de resultados -->
             <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
               <div class="flex items-center justify-between">
@@ -300,6 +333,70 @@ const paginasVisibles = computed(() => {
 
 const { $api } = useNuxtApp()
 
+// Breadcrumbs visibles + JSON-LD
+const breadcrumbItems = computed(() => {
+  const labels = ['región', 'comuna', 'estado', 'marca', 'modelo', 'año']
+  const items = []
+  let accumulated = '/vehiculos'
+
+  slug.forEach((segmento, index) => {
+    if (!segmento) return
+    accumulated += `/${segmento}`
+    items.push({
+      label: decodeURIComponent(segmento).replace(/-/g, ' '),
+      href: accumulated
+    })
+  })
+
+  // Agregar JSON-LD para SEO
+  const itemListElement = [
+    { '@type': 'ListItem', position: 1, name: 'Vehículos', item: `${window?.location?.origin || ''}/vehiculos` }
+  ]
+  items.forEach((it, idx) => {
+    itemListElement.push({
+      '@type': 'ListItem',
+      position: idx + 2,
+      name: it.label,
+      item: `${window?.location?.origin || ''}${it.href}`
+    })
+  })
+
+  useHead({
+    script: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement
+        })
+      }
+    ]
+  })
+
+  return items
+})
+
+// Detectar si la URL NO tiene región (primer segmento vacío o inexistente)
+const noRegion = computed(() => {
+  // Si el primer segmento es estado (usado/nuevo/certificado), entonces no hay región
+  const first = (slug?.[0] || '').toLowerCase()
+  const posiblesEstados = ['usado', 'nuevo', 'certificado']
+  return !first || posiblesEstados.includes(first)
+})
+
+// Detectar si falta la comuna (hay región pero no segundo segmento o el segundo segmento es estado)
+const noComuna = computed(() => {
+  const first = (slug?.[0] || '').toLowerCase()
+  const second = (slug?.[1] || '').toLowerCase()
+  const posiblesEstados = ['usado', 'nuevo', 'certificado']
+  // hay región (first no es estado y no está vacío)
+  const hayRegion = !!first && !posiblesEstados.includes(first)
+  if (!hayRegion) return false
+  // no hay comuna si second está vacío o es un estado
+  return !second || posiblesEstados.includes(second)
+})
+
 onMounted(async () => {
   // Inicializar filtros desde query params (si hay)
   filtros.value = {
@@ -455,6 +552,13 @@ function generarRutaDetalle(v) {
       .replace(/(^-|-$)/g, '')
   }
 
-  return `/vehiculos/${slugify(v.region?.nombre)}/${slugify(v.comuna?.nombre)}/${slugify(v.marca?.nombre)}/${slugify(v.modelo?.nombre)}/${v.anio}/${v.id}`
+  // Nueva estructura: region/comuna/estado/marca/modelo/ano/id
+  const region = slugify(v.region?.nombre)
+  const comuna = slugify(v.comuna?.nombre)
+  const estado = slugify(v.condicion || v.estado || 'usado')
+  const marca = slugify(v.marca?.nombre)
+  const modelo = slugify(v.modelo?.nombre)
+  const ano = v.anio
+  return `/vehiculos/${region}/${comuna}/${estado}/${marca}/${modelo}/${ano}/${v.id}`
 }
 </script>

@@ -133,4 +133,9 @@ try {
   console.error('❌ Error iniciando scheduler de remates:', e.message);
 }
 
+// Endpoint de salud para Docker healthcheck
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 module.exports = app;
